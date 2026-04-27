@@ -83,21 +83,25 @@ const clarityCards = [
     icon: ShieldCheck,
     title: "Cleaner execution on the roof",
     description: "Layouts, structures, and routing are planned to feel more premium and more trustworthy the moment you see the finished work.",
+    points: ["Cleaner panel alignment across the roof", "Tidier cable routing and finishing details", "Structure choices explained before execution starts"],
   },
   {
     icon: Sparkles,
     title: "Local consultation, not generic sales talk",
     description: "You get site-visit thinking, bill-based guidance, and clearer next steps tailored to Pune rooftops and surrounding areas.",
+    points: ["Advice shaped around your actual bill pattern", "Local roof constraints discussed early", "Next steps explained in plain language"],
   },
   {
     icon: CircleDollarSign,
     title: "Practical cost conversations",
     description: "We help explain what changes the system size, where the savings come from, and how the proposal should be evaluated.",
+    points: ["System size linked to load and roof space", "Savings range discussed before finalizing", "Proposal comparisons made easier to judge"],
   },
   {
     icon: FileText,
     title: "A neater approval journey",
     description: "Documentation and follow-up are easier to manage when the steps are visible from the start instead of surfacing late.",
+    points: ["Paperwork expectations shared earlier", "Approval flow broken into clear stages", "Follow-up support stays easier to track"],
   },
 ];
 
@@ -521,7 +525,7 @@ const Index = () => {
               {clarityCards.map((item, index) => (
                 <motion.div
                   key={item.title}
-                  className="lift-card rounded-[2rem] border border-border bg-card p-7 shadow-[0_14px_36px_rgba(15,23,42,0.06)]"
+                  className="lift-card flex h-full flex-col rounded-[2rem] border border-border bg-card p-7 shadow-[0_14px_36px_rgba(15,23,42,0.06)]"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -532,6 +536,14 @@ const Index = () => {
                   </div>
                   <h3 className="mt-6 text-xl font-extrabold text-foreground">{item.title}</h3>
                   <p className="mt-3 text-sm leading-7 text-muted-foreground">{item.description}</p>
+                  <ul className="mt-6 space-y-3 border-t border-border/70 pt-5 text-sm text-muted-foreground">
+                    {item.points.map((point) => (
+                      <li key={point} className="flex items-start gap-3">
+                        <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                        <span className="leading-6">{point}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </motion.div>
               ))}
             </div>
