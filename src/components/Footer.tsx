@@ -131,7 +131,6 @@ const Footer = () => {
                   { label: "Home", path: "/" },
                   { label: "About Us", path: "/about" },
                   { label: "Projects", path: "/projects" },
-                  { label: "Reviews", path: "/about#reviews" },
                   { label: "Contact", path: "/contact" },
                 ].map((link) => (
                   <Link key={`${link.label}-${link.path}`} to={link.path} className="group flex items-center gap-1 text-sm text-primary-foreground/50 transition-colors hover:text-solar-orange">
