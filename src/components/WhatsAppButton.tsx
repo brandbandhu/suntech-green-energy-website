@@ -18,7 +18,7 @@ const WhatsAppButton = () => {
       animate={{ y: [0, -5, 0] }}
       transition={{ repeat: Infinity, duration: 2 }}
     >
-      <WhatsAppIcon className="h-7 w-7 text-white" />
+      <WhatsAppIcon className="h-8 w-8 text-white" />
     </motion.a>
   );
 };
