@@ -14,7 +14,6 @@ import {
   PhoneCall,
   ShieldCheck,
   Sparkles,
-  Star,
   SunMedium,
   Wrench,
 } from "lucide-react";
@@ -59,6 +58,8 @@ const solutionCards = [
     highlights: ["Structure-first execution", "Large roof planning", "High daytime usage advantage"],
   },
 ];
+
+const heroBackgroundImage = heroResidential;
 
 const heroSignals = [
   {
@@ -169,10 +170,7 @@ const Index = () => {
   const preferredProjects = data.projects.filter((project) => project.isFeatured !== false);
   const featuredProjects = (preferredProjects.length > 0 ? preferredProjects : data.projects).slice(0, 3);
   const galleryProjects = featuredProjects.length > 0 ? featuredProjects : data.projects.slice(0, 3);
-  const testimonials = data.testimonials;
   const googleReviewUrl = companyProfile.googleReviewUrl || "";
-  const totalReviews = data.testimonials.length;
-  const averageRating = totalReviews > 0 ? data.testimonials.reduce((sum, item) => sum + item.rating, 0) / totalReviews : null;
 
   const monthlySavings = Math.round(bill * 0.78);
   const annualSavings = monthlySavings * 12;
@@ -182,8 +180,8 @@ const Index = () => {
   const proofStats = [
     {
       label: "Visible customer proof",
-      value: averageRating ? `${averageRating.toFixed(1)}/5` : "Trusted",
-      detail: totalReviews > 0 ? `${totalReviews}+ reviews on the site and Google feed` : "Testimonials and project proof built into the site",
+      value: "Trusted",
+      detail: "Testimonials and project proof built into the About page and project portfolio",
     },
     {
       label: "Years in business",
@@ -207,12 +205,22 @@ const Index = () => {
   return (
     <div className="bg-background">
       <section className="relative isolate overflow-hidden pb-16 pt-5 md:pb-24 lg:pb-28">
-        <div className="absolute inset-0 solar-mesh" />
-        <div className="absolute inset-0 solar-grid opacity-70" />
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+          <img
+            src={heroBackgroundImage}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover object-[56%_center] md:object-[62%_center]"
+            loading="eager"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,10,18,0.9)_0%,rgba(4,10,18,0.8)_28%,rgba(4,10,18,0.56)_58%,rgba(4,10,18,0.72)_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,13,24,0.16),rgba(5,13,24,0.46)_54%,rgba(5,13,24,0.84))]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_22%,rgba(255,178,42,0.16),transparent_20%),radial-gradient(circle_at_82%_18%,rgba(17,134,91,0.14),transparent_18%)]" />
+        </div>
+
+        <div className="absolute inset-0 solar-grid opacity-30" />
         <div className="sunbeam left-[8%] top-14 h-52 w-52 bg-solar-yellow/20" />
         <div className="sunbeam right-[10%] top-24 h-72 w-72 bg-solar-orange/15" style={{ animationDelay: "1.8s" }} />
         <div className="sunbeam bottom-0 left-1/3 h-80 w-80 bg-solar-green/20" style={{ animationDelay: "0.9s" }} />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,13,24,0.28),rgba(5,13,24,0.64)_62%,rgba(5,13,24,0.88))]" />
 
         <div className="container relative z-10 mx-auto px-4">
           <div className="grid gap-12 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
@@ -304,7 +312,7 @@ const Index = () => {
                     Free consultation
                   </div>
                   <div className="rounded-full border border-border bg-muted/40 px-4 py-2 text-sm font-semibold text-foreground">
-                    {averageRating ? `${averageRating.toFixed(1)}/5 customer rating` : "Trusted consultation"}
+                    Trusted consultation
                   </div>
                 </div>
 
@@ -899,116 +907,6 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="relative overflow-hidden py-20">
-        <div className="absolute inset-0 gradient-dark" />
-        <div className="absolute inset-0 solar-grid opacity-20" />
-        <div className="sunbeam left-[8%] top-12 h-44 w-44 bg-solar-orange/[0.18]" />
-        <div className="container relative z-10 mx-auto px-4">
-          <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr]">
-            <div>
-              <SectionHeading
-                tag="Customer Reviews"
-                title="Stronger proof blocks, richer contrast, and a more premium review section"
-                subtitle="Your manual testimonials and synced Google reviews still work together, but the presentation now feels much more deliberate and conversion-focused."
-                center={false}
-                light
-              />
-
-              <div className="glass-dark rounded-[2rem] p-7 text-primary-foreground md:p-8">
-                <div className="text-xs font-semibold uppercase tracking-[0.24em] text-primary-foreground/[0.68]">Review snapshot</div>
-                <div className="mt-4 flex items-end gap-3">
-                  <div className="text-5xl font-extrabold">{averageRating ? averageRating.toFixed(1) : "5.0"}</div>
-                  <div className="pb-1 text-sm text-primary-foreground/[0.8]">
-                    Average rating
-                    <div className="mt-1 flex items-center gap-1">
-                      {Array.from({ length: 5 }).map((_, index) => (
-                        <Star key={index} className="h-4 w-4 fill-solar-yellow text-solar-yellow" />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <p className="mt-4 text-sm leading-7 text-primary-foreground/70">
-                  {totalReviews > 0
-                    ? `${totalReviews}+ reviews are now helping this homepage build trust faster.`
-                    : "Customer feedback is displayed here to support trust and conversion."}
-                </p>
-
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <Link
-                    to="/reviews"
-                    className="inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-bold text-foreground transition-colors hover:bg-white/90"
-                  >
-                    See all reviews
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                  {googleReviewUrl ? (
-                    <a
-                      href={googleReviewUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 rounded-2xl border border-white/[0.14] px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-white/10"
-                    >
-                      View on Google
-                    </a>
-                  ) : null}
-                </div>
-              </div>
-            </div>
-
-            <div className="grid gap-5 md:grid-cols-2">
-              {testimonials.map((testimonial, index) => (
-                <motion.div
-                  key={testimonial.sourceId || `${testimonial.name}-${index}`}
-                  className="glass-dark lift-card rounded-[2rem] p-6 text-primary-foreground"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.08 }}
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="inline-flex rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary-foreground/[0.82]">
-                      {testimonial.sourceLabel || "Customer Review"}
-                    </div>
-                    {testimonial.reviewedAt ? (
-                      <div className="text-xs font-medium text-primary-foreground/[0.68]">
-                        {new Date(testimonial.reviewedAt).toLocaleDateString()}
-                      </div>
-                    ) : null}
-                  </div>
-
-                  <div className="mt-4 flex items-center gap-1">
-                    {Array.from({ length: testimonial.rating }).map((_, starIndex) => (
-                      <Star key={starIndex} className="h-4 w-4 fill-solar-yellow text-solar-yellow" />
-                    ))}
-                  </div>
-
-                  <p className="mt-4 text-sm leading-7 text-primary-foreground/[0.8]">"{testimonial.text}"</p>
-
-                  <div className="mt-6 flex items-center gap-3">
-                    {testimonial.imageUrl ? (
-                      <img
-                        src={testimonial.imageUrl}
-                        alt={testimonial.name}
-                        loading="lazy"
-                        className="h-11 w-11 rounded-full border border-white/10 object-cover"
-                      />
-                    ) : (
-                      <div className="gradient-cta flex h-11 w-11 items-center justify-center rounded-full text-sm font-bold text-foreground">
-                        {testimonial.initials || testimonial.name.slice(0, 2).toUpperCase()}
-                      </div>
-                    )}
-                    <div>
-                      <div className="font-bold text-primary-foreground">{testimonial.name}</div>
-                      <div className="text-sm text-primary-foreground/[0.68]">{testimonial.role}</div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
@@ -1033,7 +931,7 @@ const Index = () => {
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                   <Link
-                    to="/reviews"
+                    to="/about#reviews"
                     className="inline-flex items-center gap-2 rounded-2xl border border-border px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
                   >
                     Read customer feedback

@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Mail, MapPin, Phone, Send } from "lucide-react";
 import logo from "@/assets/suntech logo.png";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 import { useToast } from "@/hooks/use-toast";
 import { usePublicContent } from "@/hooks/use-public-content";
 import { subscribeNewsletter } from "@/lib/api";
@@ -131,11 +132,9 @@ const Footer = () => {
                   { label: "Home", path: "/" },
                   { label: "About Us", path: "/about" },
                   { label: "Projects", path: "/projects" },
-                  { label: "Reviews", path: "/reviews" },
-                  { label: "Financing", path: "/financing" },
                   { label: "Contact", path: "/contact" },
                 ].map((link) => (
-                  <Link key={link.path} to={link.path} className="group flex items-center gap-1 text-sm text-primary-foreground/50 transition-colors hover:text-solar-orange">
+                  <Link key={`${link.label}-${link.path}`} to={link.path} className="group flex items-center gap-1 text-sm text-primary-foreground/50 transition-colors hover:text-solar-orange">
                     <ArrowUpRight className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" />
                     {link.label}
                   </Link>
@@ -150,10 +149,9 @@ const Footer = () => {
                   { label: "Residential Solar", path: "/residential" },
                   { label: "Commercial Solar", path: "/commercial" },
                   { label: "Industrial Rooftops", path: "/commercial" },
-                  { label: "Solar Financing", path: "/financing" },
                   { label: "Subsidy Guidance", path: "/contact" },
                 ].map((link) => (
-                  <Link key={link.path} to={link.path} className="group flex items-center gap-1 text-sm text-primary-foreground/50 transition-colors hover:text-solar-orange">
+                  <Link key={`${link.label}-${link.path}`} to={link.path} className="group flex items-center gap-1 text-sm text-primary-foreground/50 transition-colors hover:text-solar-orange">
                     <ArrowUpRight className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" />
                     {link.label}
                   </Link>
@@ -186,7 +184,7 @@ const Footer = () => {
                 </a>
                 <a href={toWhatsappHref(companyProfile.whatsapp)} target="_blank" rel="noreferrer" className="group flex items-center gap-3 text-primary-foreground/50 transition-colors hover:text-solar-orange">
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary-foreground/8 transition-colors group-hover:bg-solar-orange/20">
-                    <Send className="h-4 w-4 text-solar-orange" />
+                    <WhatsAppIcon className="h-4 w-4 text-[#25D366]" />
                   </div>
                   WhatsApp: {companyProfile.whatsapp}
                 </a>

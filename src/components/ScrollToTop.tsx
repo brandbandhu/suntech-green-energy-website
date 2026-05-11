@@ -6,7 +6,15 @@ const ScrollToTop = () => {
 
   useLayoutEffect(() => {
     const id = window.setTimeout(() => {
-      if (hash) return;
+      if (hash) {
+        const target = document.getElementById(hash.slice(1));
+
+        if (target) {
+          target.scrollIntoView({ block: "start", behavior: "smooth" });
+          return;
+        }
+      }
+
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     }, 0);
     return () => window.clearTimeout(id);

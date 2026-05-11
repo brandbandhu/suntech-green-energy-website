@@ -11,8 +11,6 @@ const navLinks = [
   { label: "Residential", path: "/residential" },
   { label: "Commercial", path: "/commercial" },
   { label: "Projects", path: "/projects" },
-  { label: "Reviews", path: "/reviews" },
-  { label: "Financing", path: "/financing" },
   { label: "About", path: "/about" },
   { label: "Contact", path: "/contact" },
 ];
@@ -31,9 +29,23 @@ const Header = () => {
 
   useEffect(() => {
     setMobileOpen(false);
-  }, [location.pathname]);
+  }, [location.pathname, location.hash]);
 
   const phoneHref = toPhoneHref(data.companyProfile.phone);
+  const isLinkActive = (path: string) => {
+    const [pathname, hash] = path.split("#");
+
+    if (hash) {
+      return location.pathname === pathname && location.hash === `#${hash}`;
+    }
+
+    if (pathname === "/about") {
+      return location.pathname === pathname && location.hash !== "#reviews";
+    }
+
+    return location.pathname === pathname;
+  };
+  const navItems = navLinks.map((link) => ({ ...link, active: isLinkActive(link.path) }));
 
   return (
     <header
@@ -47,18 +59,18 @@ const Header = () => {
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
-          {navLinks.map((link) => (
+          {navItems.map((link) => (
             <Link
               key={link.path}
               to={link.path}
               className={`relative rounded-lg px-3.5 py-2 text-sm font-medium transition-all duration-300 ${
-                location.pathname === link.path
+                link.active
                   ? "text-primary"
                   : "text-solar-green hover:bg-solar-green/10 hover:text-solar-green"
               }`}
             >
               {link.label}
-              {location.pathname === link.path ? (
+              {link.active ? (
                 <motion.div layoutId="nav-active" className="absolute bottom-0 left-2 right-2 h-0.5 rounded-full bg-primary" />
               ) : null}
             </Link>
@@ -100,12 +112,12 @@ const Header = () => {
             className="overflow-hidden border-b border-border bg-white shadow-xl shadow-primary/5 lg:hidden"
           >
             <div className="container mx-auto flex flex-col gap-1.5 px-4 py-4">
-              {navLinks.map((link, index) => (
+              {navItems.map((link, index) => (
                 <motion.div key={link.path} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.05 }}>
                   <Link
                     to={link.path}
                     className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition-all ${
-                      location.pathname === link.path
+                      link.active
                         ? "border border-solar-green/20 bg-solar-green/10 text-solar-green"
                         : "text-solar-green hover:bg-solar-green/5"
                     }`}

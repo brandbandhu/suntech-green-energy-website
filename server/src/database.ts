@@ -19,6 +19,12 @@ type ParsedConnection = {
 
 let pool: mysql.Pool | null = null;
 
+const legacyDefaultProjectImageUrls = [
+  "default:hero-residential",
+  "default:hero-commercial",
+  "default:hero-industrial",
+];
+
 const migrationStatements = [
   `CREATE TABLE IF NOT EXISTS admins (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -234,6 +240,24 @@ const seedProjectsIfMissing = async (db: mysql.Pool) => {
   }
 };
 
+const syncSeedProjectImages = async (db: mysql.Pool) => {
+  for (const project of defaultProjects) {
+    await db.execute(
+      `UPDATE projects
+       SET image_url = ?
+       WHERE title = ?
+         AND image_url IN (?, ?, ?)`,
+      [
+        project.imageUrl,
+        project.title,
+        legacyDefaultProjectImageUrls[0],
+        legacyDefaultProjectImageUrls[1],
+        legacyDefaultProjectImageUrls[2],
+      ],
+    );
+  }
+};
+
 const seedTestimonialsIfMissing = async (db: mysql.Pool) => {
   const [rows] = await db.query<any[]>("SELECT COUNT(*) AS total FROM testimonials");
 
@@ -314,6 +338,7 @@ export const initDatabase = async () => {
   await insertSettingsIfMissing(pool);
   await seedAdminIfMissing(pool);
   await seedProjectsIfMissing(pool);
+  await syncSeedProjectImages(pool);
   await seedTestimonialsIfMissing(pool);
 
   return pool;

@@ -12,8 +12,6 @@ import Index from "./pages/Index";
 import Residential from "./pages/Residential";
 import Commercial from "./pages/Commercial";
 import Projects from "./pages/Projects";
-import Reviews from "./pages/Reviews";
-import Financing from "./pages/Financing";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
@@ -38,8 +36,8 @@ const App = () => (
             <Route path="/commercial" element={<Commercial />} />
             <Route path="/epc" element={<Navigate to="/contact" replace />} />
             <Route path="/projects" element={<Projects />} />
-            <Route path="/reviews" element={<Reviews />} />
-            <Route path="/financing" element={<Financing />} />
+            <Route path="/reviews" element={<Navigate to={{ pathname: "/about", hash: "#reviews" }} replace />} />
+            <Route path="/financing" element={<Navigate to="/about" replace />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
           </Route>

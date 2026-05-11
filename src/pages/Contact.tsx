@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
-import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import LeadForm from "@/components/LeadForm";
 import PageBanner from "@/components/PageBanner";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 import { usePublicContent } from "@/hooks/use-public-content";
 import { getPhoneList, toPhoneHref, toWhatsappHref } from "@/lib/contact-utils";
 
@@ -17,7 +18,7 @@ const Contact = () => {
       href: toPhoneHref(phone),
     })),
     { icon: Mail, title: "Email", value: data.companyProfile.email, href: `mailto:${data.companyProfile.email}` },
-    { icon: MessageCircle, title: "WhatsApp", value: data.companyProfile.whatsapp, href: toWhatsappHref(data.companyProfile.whatsapp) },
+    { icon: WhatsAppIcon, title: "WhatsApp", value: data.companyProfile.whatsapp, href: toWhatsappHref(data.companyProfile.whatsapp) },
     { icon: Clock, title: "Working Hours", value: data.companyProfile.workingHours },
   ];
 
