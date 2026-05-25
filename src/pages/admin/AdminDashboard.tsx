@@ -523,6 +523,8 @@ const AdminDashboard = () => {
                         <div className="mt-3 space-y-2 text-sm text-muted-foreground">
                           <p><span className="font-semibold text-foreground">Phone:</span> {lead.phone}</p>
                           <p><span className="font-semibold text-foreground">Email:</span> {lead.email || "Not provided"}</p>
+                          <p><span className="font-semibold text-foreground">City:</span> {lead.city || "Not provided"}</p>
+                          <p><span className="font-semibold text-foreground">PIN Code:</span> {lead.pin_code || "Not provided"}</p>
                           <p><span className="font-semibold text-foreground">Monthly Bill:</span> {lead.monthly_bill ?? "Not provided"}</p>
                           <p><span className="font-semibold text-foreground">Source Page:</span> {lead.source_page || "Unknown"}</p>
                           <p><span className="font-semibold text-foreground">UTM:</span> {lead.utm_source || "Direct"} / {lead.utm_medium || "-"} / {lead.utm_campaign || "-"}</p>

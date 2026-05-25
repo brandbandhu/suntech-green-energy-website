@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import {
   ArrowRight,
   BadgeCheck,
@@ -8,7 +8,6 @@ import {
   Calculator,
   CircleDollarSign,
   Factory,
-  FileText,
   Home,
   MapPin,
   PhoneCall,
@@ -61,146 +60,190 @@ const solutionCards = [
 
 const heroBackgroundImage = heroResidential;
 
-const heroSignals = [
+const heroQuickCards = [
   {
     icon: CircleDollarSign,
     title: "Savings-led proposals",
-    description: "We shape the recommendation around your monthly bill and actual roof potential instead of pushing a standard package.",
+    description: "Bill-based recommendation.",
   },
   {
-    icon: FileText,
-    title: "Subsidy and approval guidance",
-    description: "From paperwork direction to net-metering coordination, the process is explained in a much more usable way.",
+    icon: ShieldCheck,
+    title: "Subsidy guidance",
+    description: "Simple process support.",
   },
   {
     icon: Wrench,
-    title: "Support after installation",
-    description: "The experience does not stop at handover. We stay helpful through activation, questions, and upkeep guidance.",
+    title: "After-install support",
+    description: "Help after handover.",
   },
 ];
 
-const clarityCards = [
+const whyChooseCards = [
   {
     icon: ShieldCheck,
-    title: "Cleaner execution on the roof",
-    description: "Layouts, structures, and routing are planned to feel more premium and more trustworthy the moment you see the finished work.",
-    points: ["Cleaner panel alignment across the roof", "Tidier cable routing and finishing details", "Structure choices explained before execution starts"],
+    title: "Trusted execution standards",
+    description: "Every rooftop design is planned with clean alignment, secure mounting, and neat cable routing for a premium finish.",
   },
   {
     icon: Sparkles,
-    title: "Local consultation, not generic sales talk",
-    description: "You get site-visit thinking, bill-based guidance, and clearer next steps tailored to Pune rooftops and surrounding areas.",
-    points: ["Advice shaped around your actual bill pattern", "Local roof constraints discussed early", "Next steps explained in plain language"],
+    title: "End-to-end project clarity",
+    description: "From site survey to commissioning, we keep each step transparent so your family or committee can decide confidently.",
   },
   {
     icon: CircleDollarSign,
-    title: "Practical cost conversations",
-    description: "We help explain what changes the system size, where the savings come from, and how the proposal should be evaluated.",
-    points: ["System size linked to load and roof space", "Savings range discussed before finalizing", "Proposal comparisons made easier to judge"],
+    title: "Savings-focused recommendations",
+    description: "System sizing is matched to your real consumption, roof area, and budget so payback and savings stay practical.",
   },
   {
-    icon: FileText,
-    title: "A neater approval journey",
-    description: "Documentation and follow-up are easier to manage when the steps are visible from the start instead of surfacing late.",
-    points: ["Paperwork expectations shared earlier", "Approval flow broken into clear stages", "Follow-up support stays easier to track"],
-  },
-];
-
-const quoteChecklist = [
-  "Free rooftop visit and initial requirement review",
-  "Direction on system size, layout, and roof fit",
-  "Discussion around subsidy, approvals, and next steps",
-  "Support that continues after installation goes live",
-];
-
-const processSteps = [
-  {
-    number: "01",
-    title: "Talk through the bill and the roof",
-    description: "We start by understanding your usage, sanctioned load, free rooftop area, and the kind of savings outcome you want.",
-  },
-  {
-    number: "02",
-    title: "Shape the right solar proposal",
-    description: "The system direction is matched to your roof, your category, your budget comfort, and the practical approval flow.",
-  },
-  {
-    number: "03",
-    title: "Install with cleaner coordination",
-    description: "Execution stays organized from structure work to panel placement so the site feels managed instead of improvised.",
-  },
-  {
-    number: "04",
-    title: "Activate, explain, and stay available",
-    description: "After handover, we help you understand generation, approvals, and what the next few weeks should look like.",
+    icon: Wrench,
+    title: "Reliable after-install support",
+    description: "Our team stays available beyond installation for performance checks, service guidance, and long-term peace of mind.",
   },
 ];
 
 const faqItems = [
   {
-    question: "How do I know if my roof is suitable for solar?",
+    question: "What is the cost of rooftop solar in Pune?",
     answer:
-      "We look at your usable roof area, shadow pattern, structure type, load, and bill pattern during the site visit. That gives a much clearer answer than guessing from bill size alone.",
+      "Final cost depends on system size, roof type, and component selection. Most homes and societies get a clear quote after site survey and load analysis.",
   },
   {
-    question: "Can your team guide us on subsidy and net-metering?",
+    question: "How much electricity bill can I save with solar?",
     answer:
-      "Yes. We help explain the steps, paperwork direction, and approval flow so you know what is needed and when. Exact eligibility still depends on your category and current rules.",
+      "Savings usually depend on your monthly usage and system size. In many cases, rooftop solar can reduce bills significantly after commissioning.",
   },
   {
-    question: "Do you handle only homes, or larger rooftops too?",
+    question: "Do you provide solar installation for housing societies?",
     answer:
-      "We support residential, commercial, and industrial rooftops. The design and execution approach changes based on roof scale, load profile, and structure requirements.",
+      "Yes. We support housing society projects with site survey, load planning, proposal, installation, and post-installation service support.",
   },
   {
-    question: "What happens after the system is installed?",
+    question: "Is subsidy available for home solar?",
     answer:
-      "We stay available for activation guidance, performance questions, and post-install support so the project feels complete beyond the installation day.",
+      "Subsidy may be available for eligible residential installations based on current government norms. Our team helps you understand the latest process and documentation.",
+  },
+  {
+    question: "How much time does solar installation take?",
+    answer:
+      "Timelines vary by project size and approvals, but most home projects move quickly once survey, design confirmation, and paperwork are completed.",
+  },
+  {
+    question: "Do you provide service after installation?",
+    answer:
+      "Yes. We provide after-sales support for system performance, maintenance guidance, and service coordination whenever needed.",
   },
 ];
 
-const billPresets = [1500, 2500, 4000, 8000, 12000];
+const calculatorBillPresets = [2000, 4000, 6000, 8000, 12000, 20000];
+
+const AnimatedCounter = ({
+  target,
+  prefix = "",
+  suffix = "",
+  duration = 1400,
+}: {
+  target: number;
+  prefix?: string;
+  suffix?: string;
+  duration?: number;
+}) => {
+  const ref = useRef<HTMLSpanElement | null>(null);
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    if (!isInView) {
+      return;
+    }
+
+    let frame = 0;
+    let startedAt = 0;
+
+    const step = (timestamp: number) => {
+      if (!startedAt) {
+        startedAt = timestamp;
+      }
+
+      const progress = Math.min((timestamp - startedAt) / duration, 1);
+      const easedProgress = 1 - (1 - progress) ** 3;
+      setValue(target * easedProgress);
+
+      if (progress < 1) {
+        frame = requestAnimationFrame(step);
+      }
+    };
+
+    frame = requestAnimationFrame(step);
+
+    return () => {
+      cancelAnimationFrame(frame);
+    };
+  }, [duration, isInView, target]);
+
+  return (
+    <span ref={ref}>
+      {prefix}
+      {Math.round(value).toLocaleString("en-IN")}
+      {suffix}
+    </span>
+  );
+};
 
 const Index = () => {
   const { data } = usePublicContent();
-  const [bill, setBill] = useState(4000);
+  const [calculatorBill, setCalculatorBill] = useState(6000);
+  const [hasLoadShedding, setHasLoadShedding] = useState<boolean | null>(null);
+  const [needsHeavyDutyStructure, setNeedsHeavyDutyStructure] = useState(false);
+  const [includeMsebPaperwork, setIncludeMsebPaperwork] = useState(true);
+  const [calculatorAddress, setCalculatorAddress] = useState("");
 
   const { aboutPage, companyProfile } = data;
   const yearsInBusiness = Math.max(1, new Date().getFullYear() - companyProfile.yearEstablished);
   const preferredProjects = data.projects.filter((project) => project.isFeatured !== false);
   const featuredProjects = (preferredProjects.length > 0 ? preferredProjects : data.projects).slice(0, 3);
-  const galleryProjects = featuredProjects.length > 0 ? featuredProjects : data.projects.slice(0, 3);
-  const googleReviewUrl = companyProfile.googleReviewUrl || "";
 
-  const monthlySavings = Math.round(bill * 0.78);
-  const annualSavings = monthlySavings * 12;
-  const systemSize = Math.max(2, Math.round(bill / 1500));
-  const roofArea = systemSize * 90;
+  const recommendedKw = Math.max(calculatorBill / 800, 0);
+  const subsidy = Math.min(recommendedKw <= 1 ? 30000 : recommendedKw <= 2 ? 60000 : 78000, 78000);
+  const systemType = hasLoadShedding ? "Hybrid + Battery" : "On-Grid";
+  const batteryBackupAddon = hasLoadShedding ? recommendedKw * 25000 : 0;
+  const heavyDutyAddon = needsHeavyDutyStructure ? recommendedKw * 3000 : 0;
+  const annualSavings = calculatorBill * 12 * (needsHeavyDutyStructure ? 1.03 : 1);
+  const estimatedInvestment = recommendedKw * 58000 + batteryBackupAddon + heavyDutyAddon;
+  const investmentAfterSubsidy = Math.max(estimatedInvestment - subsidy, 0);
+  const paybackYears = annualSavings > 0 ? investmentAfterSubsidy / annualSavings : 0;
+  const roofAreaSqFt = recommendedKw * 100;
+
+  const formatCurrency = (amount: number) => `₹${Math.round(amount).toLocaleString("en-IN")}`;
 
   const proofStats = [
     {
-      label: "Visible customer proof",
-      value: "Trusted",
-      detail: "Testimonials and project proof built into the About page and project portfolio",
+      label: "Homes Solarized",
+      countTo: 500,
+      suffix: "+",
+      detail: "Trusted installations delivered for families across Pune and nearby service areas.",
+      icon: Home,
     },
     {
-      label: "Years in business",
-      value: `${yearsInBusiness}+`,
-      detail: "A local team focused on clearer solar planning and execution",
+      label: "Power Installed",
+      countTo: 1,
+      suffix: " MW",
+      detail: "Total rooftop capacity installed with quality-driven engineering and execution standards.",
+      icon: SunMedium,
     },
     {
-      label: "Rooftop categories",
-      value: "3",
-      detail: "Homes, commercial roofs, and industrial sheds",
+      label: "Years in Business",
+      countTo: yearsInBusiness,
+      suffix: "+",
+      detail: "Consistent delivery and support since the year we started in Pune.",
+      icon: ShieldCheck,
     },
     {
-      label: "Portfolio highlights",
-      value: `${Math.max(featuredProjects.length, 1)}`,
-      detail: "Featured solar examples already available on the site",
+      label: "Portfolio Highlights",
+      countTo: Math.max(featuredProjects.length, 1),
+      detail: "Real project cards showcasing installation quality and location coverage.",
+      icon: BadgeCheck,
     },
   ];
-  const secondaryGalleryProjects = galleryProjects.slice(1, 3);
-  const galleryLayout = galleryProjects.length >= 3 ? "masonry" : galleryProjects.length === 2 ? "split" : "single";
 
   return (
     <div className="bg-background">
@@ -225,17 +268,12 @@ const Index = () => {
         <div className="container relative z-10 mx-auto px-4">
           <div className="grid gap-12 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
             <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65 }}>
-              <div className="glass-dark inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-primary-foreground/[0.82]">
-                <Sparkles className="h-4 w-4 text-solar-yellow" />
-                Rooftop solar in Pune
-              </div>
-
-              <h1 className="mt-6 max-w-4xl text-4xl font-extrabold leading-[0.98] text-primary-foreground md:text-6xl lg:text-7xl">
+              <h1 className="mt-2 max-w-4xl text-3xl font-extrabold leading-[1.02] text-primary-foreground md:text-5xl lg:text-6xl">
                 Solar in Pune, designed around savings instead of sales pressure.
               </h1>
 
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-primary-foreground/[0.78] md:text-xl">
-                SUNTECH plans rooftop solar for homes, businesses, and industrial roofs with stronger visual polish, clearer guidance,
+              <p className="mt-6 max-w-2xl text-base leading-7 text-primary-foreground/[0.78] md:text-lg">
+                Suntech Green Energy plans rooftop solar for homes, businesses, and industrial roofs with stronger visual polish, clearer guidance,
                 better trust-building, and a process that feels easier from site visit to activation.
               </p>
 
@@ -255,36 +293,24 @@ const Index = () => {
                 </Link>
               </div>
 
-              <div className="mt-8 flex flex-wrap gap-3 text-sm text-primary-foreground/[0.8]">
-                {[
-                  "Residential, commercial, and industrial rooftops",
-                  "Guidance for subsidy and approval flow",
-                  "A cleaner post-install support experience",
-                ].map((item) => (
-                  <div key={item} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 backdrop-blur-sm">
-                    <BadgeCheck className="h-4 w-4 text-solar-yellow" />
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-10 grid gap-4 md:grid-cols-3">
-                {heroSignals.map((item, index) => (
+              <div className="mt-8 grid gap-3 md:grid-cols-3">
+                {heroQuickCards.map((card, index) => (
                   <motion.div
-                    key={item.title}
-                    className="glass-dark lift-card rounded-[1.7rem] p-5"
-                    initial={{ opacity: 0, y: 24 }}
+                    key={card.title}
+                    className="glass-dark rounded-2xl px-4 py-4"
+                    initial={{ opacity: 0, y: 18 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.45, delay: 0.12 + index * 0.08 }}
+                    transition={{ duration: 0.35, delay: 0.16 + index * 0.06 }}
                   >
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10">
-                      <item.icon className="h-5 w-5 text-solar-yellow" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
+                      <card.icon className="h-4 w-4 text-solar-yellow" />
                     </div>
-                    <h2 className="mt-5 text-lg font-extrabold text-primary-foreground">{item.title}</h2>
-                    <p className="mt-2 text-sm leading-7 text-primary-foreground/[0.7]">{item.description}</p>
+                    <h2 className="mt-3 text-sm font-bold text-primary-foreground">{card.title}</h2>
+                    <p className="mt-1 text-xs text-primary-foreground/70">{card.description}</p>
                   </motion.div>
                 ))}
               </div>
+
             </motion.div>
 
             <motion.div
@@ -317,58 +343,28 @@ const Index = () => {
                 </div>
 
                 <div className="mt-6">
-                  <h2 className="text-3xl font-extrabold leading-tight text-foreground">Book a solar consultation that actually feels useful.</h2>
-                  <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                    Share your bill and contact details. We will help you understand the right direction for your roof, the likely savings range,
-                    and the next steps around subsidy and approvals.
-                  </p>
+                  <LeadForm compact showConsultationHeader />
                 </div>
 
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {[
-                    "Free rooftop visit",
-                    "Savings discussion",
-                    "Subsidy guidance",
-                    "Post-install support",
-                  ].map((item) => (
-                    <div key={item} className="rounded-full border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                      {item}
+                <div className="mt-5 rounded-[1.5rem] bg-[#eaf2ff] p-3.5">
+                  <div className="flex items-center gap-3 rounded-2xl bg-[#e8f2ff] p-3 sm:gap-4 sm:p-4">
+                    <img
+                      src={heroResidential}
+                      alt="Solar calculator"
+                      className="h-16 w-28 rounded-xl object-cover sm:h-20 sm:w-32"
+                      loading="lazy"
+                    />
+                    <div className="min-w-0">
+                      <div className="text-base font-extrabold text-[#1d2942] sm:text-[1.65rem] sm:leading-tight">Curious about solar savings?</div>
+                      <a
+                        href="#solar-calculator"
+                        className="mt-2 inline-flex items-center gap-2 text-sm font-bold text-[#1f35b3] transition-colors hover:text-[#1a2b8e] sm:text-xl"
+                      >
+                        Try Solar Calculator
+                        <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
+                      </a>
                     </div>
-                  ))}
-                </div>
-
-                <div className="mt-6">
-                  <LeadForm compact />
-                </div>
-
-                <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                  {[
-                    { title: "Subsidy help", description: "Know the flow before you commit." },
-                    { title: "Net-metering support", description: "A clearer route through documents." },
-                    { title: "Local callback", description: `Speak directly with ${companyProfile.shortName}.` },
-                  ].map((item) => (
-                    <div key={item.title} className="rounded-[1.3rem] border border-border bg-muted/[0.35] p-4">
-                      <div className="text-sm font-bold text-foreground">{item.title}</div>
-                      <div className="mt-1 text-xs leading-6 text-muted-foreground">{item.description}</div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-[1.4rem] bg-primary/[0.05] px-4 py-3">
-                  <div className="text-sm text-muted-foreground">
-                    Prefer to speak first? Call us at <span className="font-bold text-foreground">{companyProfile.phone}</span>
                   </div>
-                  {googleReviewUrl ? (
-                    <a
-                      href={googleReviewUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 text-sm font-bold text-primary transition-colors hover:text-primary/80"
-                    >
-                      View reviews
-                      <ArrowRight className="h-4 w-4" />
-                    </a>
-                  ) : null}
                 </div>
               </div>
             </motion.div>
@@ -382,14 +378,19 @@ const Index = () => {
             {proofStats.map((stat, index) => (
               <motion.div
                 key={stat.label}
-                className="lift-card rounded-[1.75rem] border border-border/80 bg-card/[0.95] p-6 shadow-[0_18px_48px_rgba(12,22,36,0.08)] backdrop-blur-xl"
+                className="lift-card rounded-[1.75rem] border border-border/70 bg-card p-6 text-center shadow-[0_16px_40px_rgba(12,22,36,0.09)] backdrop-blur-xl"
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.45, delay: index * 0.07 }}
               >
-                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">{stat.label}</div>
-                <div className="mt-3 text-4xl font-extrabold leading-none text-foreground">{stat.value}</div>
+                <div className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[linear-gradient(145deg,rgba(27,151,94,0.2),rgba(27,151,94,0.08))] ring-1 ring-primary/25 shadow-[0_10px_24px_rgba(12,22,36,0.14)]">
+                  <stat.icon className="h-6 w-6 text-primary" />
+                </div>
+                <div className="mt-5 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">{stat.label}</div>
+                <div className="mt-3 text-4xl font-extrabold leading-none text-primary">
+                  <AnimatedCounter target={stat.countTo} suffix={stat.suffix} />
+                </div>
                 <p className="mt-3 text-sm leading-7 text-muted-foreground">{stat.detail}</p>
               </motion.div>
             ))}
@@ -402,9 +403,9 @@ const Index = () => {
           <div className="grid gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-end">
             <div>
               <SectionHeading
-                tag="Solar Solutions"
-                title="A homepage flow that now feels much closer to a modern solar landing page"
-                subtitle="The layout now leans into stronger hierarchy, heavier trust cues, and more premium visual contrast while still using your own SUNTECH content and categories."
+                tag="About Suntech Green Energy"
+                title="Our History of Solar Excellence Since 2020"
+                subtitle="Suntech Green Energy started in 2020 with a clear mission: make reliable solar practical for homes, businesses, and industries through honest guidance and quality execution."
                 center={false}
               />
             </div>
@@ -417,9 +418,9 @@ const Index = () => {
             >
               <div className="sunbeam -right-10 top-0 h-36 w-36 bg-solar-orange/[0.18]" />
               <div className="relative z-10">
-                <div className="text-xs font-semibold uppercase tracking-[0.26em] text-primary-foreground/[0.68]">Experience Snapshot</div>
+                <div className="text-xs font-semibold uppercase tracking-[0.26em] text-primary-foreground/[0.68]">Our Journey</div>
                 <h2 className="mt-4 text-3xl font-extrabold leading-tight md:text-4xl">
-                  {aboutPage.storyTitle || "Solar planning that feels clearer from the very first scroll"}
+                  {aboutPage.storyTitle || "Suntech Green Energy: Solar Excellence Since 2020"}
                 </h2>
                 <p className="mt-4 text-base leading-8 text-primary-foreground/[0.8]">{aboutPage.storyParagraph1}</p>
                 <div className="mt-6 flex flex-wrap gap-3 text-sm text-primary-foreground/80">
@@ -484,364 +485,246 @@ const Index = () => {
 
       <section className="bg-muted/[0.45] py-20">
         <div className="container mx-auto px-4">
-          <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr]">
-            <motion.div
-              className="relative overflow-hidden rounded-[2rem] gradient-dark p-8 text-primary-foreground shadow-[0_20px_70px_rgba(3,12,28,0.22)] md:p-10"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <div className="sunbeam -left-10 bottom-0 h-40 w-40 bg-solar-green/[0.18]" />
-              <div className="relative z-10">
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-primary-foreground/[0.84]">
-                  <ShieldCheck className="h-4 w-4 text-solar-yellow" />
-                  Why choose {companyProfile.shortName}
+          <SectionHeading
+            tag="Why Choose Us"
+            title={`Why ${companyProfile.shortName} Feels Reliable From Day One`}
+            subtitle="Professional solar guidance, transparent execution, and dependable support for homes and housing societies."
+          />
+
+          <div className="mx-auto mt-12 grid max-w-6xl gap-6 md:grid-cols-2 xl:grid-cols-4">
+            {whyChooseCards.map((item, index) => (
+              <motion.div
+                key={item.title}
+                className="lift-card rounded-[1.9rem] border border-border bg-card p-7 shadow-[0_16px_40px_rgba(15,23,42,0.08)]"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.08 }}
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10">
+                  <item.icon className="h-6 w-6 text-primary" />
                 </div>
+                <h3 className="mt-5 text-xl font-extrabold text-foreground">{item.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-muted-foreground">{item.description}</p>
+              </motion.div>
+            ))}
+          </div>
 
-                <h2 className="mt-6 text-3xl font-extrabold leading-tight md:text-5xl">
-                  Built to feel more trustworthy before, during, and after installation.
-                </h2>
-                <p className="mt-5 text-base leading-8 text-primary-foreground/70">{aboutPage.storyParagraph2}</p>
-
-                <div className="mt-8 space-y-4">
-                  {[
-                    "Local rooftop understanding and more practical site conversations",
-                    "Clearer hand-holding on subsidy, proposal, and approval expectations",
-                    "A stronger service mindset after the rooftop goes live",
-                  ].map((item) => (
-                    <div key={item} className="flex items-start gap-3 rounded-[1.35rem] border border-white/10 bg-white/[0.06] px-4 py-4">
-                      <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-solar-yellow" />
-                      <span className="text-sm leading-7 text-primary-foreground/[0.84]">{item}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-8 grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-[1.35rem] border border-white/10 bg-white/[0.06] p-4">
-                    <div className="text-xs font-semibold uppercase tracking-[0.22em] text-primary-foreground/[0.64]">Working hours</div>
-                    <div className="mt-2 text-base font-semibold text-primary-foreground">{companyProfile.workingHours}</div>
-                  </div>
-                  <div className="rounded-[1.35rem] border border-white/10 bg-white/[0.06] p-4">
-                    <div className="text-xs font-semibold uppercase tracking-[0.22em] text-primary-foreground/[0.64]">Primary support line</div>
-                    <div className="mt-2 text-base font-semibold text-primary-foreground">{companyProfile.phone}</div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            <div className="grid gap-5 sm:grid-cols-2">
-              {clarityCards.map((item, index) => (
-                <motion.div
-                  key={item.title}
-                  className="lift-card flex h-full flex-col rounded-[2rem] border border-border bg-card p-7 shadow-[0_14px_36px_rgba(15,23,42,0.06)]"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.08 }}
-                >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10">
-                    <item.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="mt-6 text-xl font-extrabold text-foreground">{item.title}</h3>
-                  <p className="mt-3 text-sm leading-7 text-muted-foreground">{item.description}</p>
-                  <ul className="mt-6 space-y-3 border-t border-border/70 pt-5 text-sm text-muted-foreground">
-                    {item.points.map((point) => (
-                      <li key={point} className="flex items-start gap-3">
-                        <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                        <span className="leading-6">{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
-              ))}
+          <div className="mx-auto mt-10 grid max-w-4xl gap-4 rounded-[1.8rem] border border-border bg-card/80 p-6 shadow-[0_12px_30px_rgba(15,23,42,0.05)] sm:grid-cols-2">
+            <div className="rounded-[1.2rem] bg-muted/35 p-4">
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Working Hours</div>
+              <div className="mt-2 text-base font-semibold text-foreground">{companyProfile.workingHours}</div>
+            </div>
+            <div className="rounded-[1.2rem] bg-muted/35 p-4">
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Support Line</div>
+              <div className="mt-2 text-base font-semibold text-foreground">{companyProfile.phone}</div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-20">
+      <section id="solar-calculator" className="py-20">
         <div className="container mx-auto px-4">
-          <div className="grid gap-8 lg:grid-cols-[1.02fr_0.98fr]">
+          <div className="grid gap-8 lg:grid-cols-[1.12fr_0.88fr]">
             <motion.div
               className="overflow-hidden rounded-[2rem] border border-border bg-card p-7 shadow-[0_20px_60px_rgba(15,23,42,0.08)] md:p-8"
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <div className="inline-flex items-center gap-2 rounded-full bg-primary/[0.08] px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-primary">
-                    <Calculator className="h-4 w-4" />
-                    Savings estimator
-                  </div>
-                  <h2 className="mt-4 text-3xl font-extrabold text-foreground md:text-4xl">See how the numbers start shaping the conversation.</h2>
-                  <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                    This is a directional estimate only. Real output depends on roof condition, free area, sanctioned load, usage pattern,
-                    and the final system design.
-                  </p>
-                </div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-primary/[0.08] px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-primary">
+                <Calculator className="h-4 w-4" />
+                Residential Calculator
+              </div>
+              <h2 className="mt-4 text-3xl font-extrabold text-foreground md:text-4xl">Claim up to ₹78,000 subsidy with a Suntech savings estimate.</h2>
+              <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                This estimate follows a practical residential model and gives direction on system size, subsidy, and payback before your site survey.
+              </p>
 
-                <div className="rounded-[1.35rem] bg-secondary/[0.12] px-4 py-3 text-right">
-                  <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Indicative bill</div>
-                  <div className="mt-2 text-3xl font-extrabold text-secondary">₹{bill.toLocaleString()}</div>
+              <div className="mt-6">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <label className="text-sm font-semibold text-foreground">Monthly Electricity Bill</label>
+                  <span className="rounded-xl bg-secondary/[0.12] px-3 py-2 text-sm font-bold text-secondary">{formatCurrency(calculatorBill)}</span>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={30000}
+                  step={500}
+                  value={calculatorBill}
+                  onChange={(event) => setCalculatorBill(Number(event.target.value))}
+                  className="h-2 w-full cursor-pointer appearance-none rounded-full bg-muted accent-secondary"
+                />
+                <div className="mt-2 flex justify-between text-xs font-medium text-muted-foreground">
+                  <span>₹0</span>
+                  <span>₹30,000</span>
                 </div>
               </div>
 
-              <div className="mt-6 flex flex-wrap gap-2">
-                {billPresets.map((amount) => (
+              <div className="mt-5 flex flex-wrap gap-2">
+                {calculatorBillPresets.map((amount) => (
                   <button
                     key={amount}
                     type="button"
-                    onClick={() => setBill(amount)}
+                    onClick={() => setCalculatorBill(amount)}
                     className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
-                      bill === amount
+                      calculatorBill === amount
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-border bg-background text-foreground hover:bg-muted"
                     }`}
                   >
-                    ₹{amount.toLocaleString()}
+                    {formatCurrency(amount)}
                   </button>
                 ))}
               </div>
 
-              <div className="mt-8">
+              <div className="mt-6 rounded-[1.35rem] border border-border bg-muted/[0.35] p-5">
+                <p className="text-sm font-semibold text-foreground">Do you experience frequent load shedding?</p>
+                <div className="mt-3 grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setHasLoadShedding(true)}
+                    className={`rounded-xl border px-4 py-3 text-sm font-semibold transition-colors ${
+                      hasLoadShedding === true ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    Yes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setHasLoadShedding(false)}
+                    className={`rounded-xl border px-4 py-3 text-sm font-semibold transition-colors ${
+                      hasLoadShedding === false ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    No
+                  </button>
+                </div>
+                {hasLoadShedding === true ? (
+                  <div className="mt-3 rounded-xl border border-solar-yellow/35 bg-solar-yellow/10 px-3 py-2 text-xs font-semibold text-foreground">
+                    Hybrid + battery is usually recommended for backup during outages.
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="mt-5 space-y-3">
+                <label className="flex items-center gap-3 rounded-xl border border-border bg-muted/[0.3] px-4 py-3 text-sm text-foreground">
+                  <input
+                    type="checkbox"
+                    checked={needsHeavyDutyStructure}
+                    onChange={(event) => setNeedsHeavyDutyStructure(event.target.checked)}
+                    className="h-4 w-4 accent-primary"
+                  />
+                  Heavy-duty galvanized mounting structure required
+                </label>
+
+                <label className="flex items-center gap-3 rounded-xl border border-border bg-muted/[0.3] px-4 py-3 text-sm text-foreground">
+                  <input
+                    type="checkbox"
+                    checked={includeMsebPaperwork}
+                    onChange={(event) => setIncludeMsebPaperwork(event.target.checked)}
+                    className="h-4 w-4 accent-primary"
+                  />
+                  Include end-to-end Mahavitaran paperwork support
+                </label>
+
+                {includeMsebPaperwork ? (
+                  <div className="rounded-xl border border-primary/25 bg-primary/10 px-3 py-2 text-xs font-semibold text-primary">
+                    100% Mahavitaran paperwork guidance included in consultation.
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="mt-5">
+                <label className="mb-2 block text-sm font-semibold text-foreground">Address</label>
                 <input
-                  type="range"
-                  min={1000}
-                  max={20000}
-                  step={500}
-                  value={bill}
-                  onChange={(event) => setBill(Number(event.target.value))}
-                  className="h-2 w-full cursor-pointer appearance-none rounded-full bg-muted accent-secondary"
+                  type="text"
+                  value={calculatorAddress}
+                  onChange={(event) => setCalculatorAddress(event.target.value)}
+                  placeholder="Enter your full address"
+                  className="w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/25"
                 />
-                <div className="mt-2 flex justify-between text-xs font-medium text-muted-foreground">
-                  <span>₹1,000</span>
-                  <span>₹20,000</span>
-                </div>
-              </div>
-
-              <div className="mt-8 grid gap-4 md:grid-cols-3">
-                <motion.div
-                  key={`monthly-${monthlySavings}`}
-                  initial={{ opacity: 0.3, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="rounded-[1.45rem] bg-primary/[0.06] p-5"
-                >
-                  <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Potential monthly savings</div>
-                  <div className="mt-3 text-3xl font-extrabold text-primary">₹{monthlySavings.toLocaleString()}</div>
-                </motion.div>
-                <motion.div
-                  key={`annual-${annualSavings}`}
-                  initial={{ opacity: 0.3, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25, delay: 0.04 }}
-                  className="rounded-[1.45rem] bg-secondary/[0.12] p-5"
-                >
-                  <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Potential annual relief</div>
-                  <div className="mt-3 text-3xl font-extrabold text-secondary">₹{annualSavings.toLocaleString()}</div>
-                </motion.div>
-                <motion.div
-                  key={`system-${systemSize}`}
-                  initial={{ opacity: 0.3, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25, delay: 0.08 }}
-                  className="rounded-[1.45rem] bg-solar-green/[0.08] p-5"
-                >
-                  <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Indicative system size</div>
-                  <div className="mt-3 text-3xl font-extrabold text-solar-green">{systemSize} kW</div>
-                </motion.div>
-              </div>
-
-              <div className="mt-6 rounded-[1.7rem] border border-border bg-muted/[0.35] p-5">
-                <div className="grid gap-4 md:grid-cols-[0.9fr_1.1fr]">
-                  <div>
-                    <div className="text-sm font-bold text-foreground">What this bill range usually points toward</div>
-                    <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                      Around <span className="font-bold text-foreground">{roofArea} sq ft</span> of usable roof area may be worth reviewing for a
-                      <span className="font-bold text-foreground"> {systemSize} kW</span> direction.
-                    </p>
-                  </div>
-                  <div className="space-y-3 text-sm text-muted-foreground">
-                    {[
-                      `Proposal direction shaped around roughly ₹${annualSavings.toLocaleString()} yearly bill relief`,
-                      "A better conversation on subsidy support and approval readiness",
-                      "Clearer understanding of whether your roof should go smaller, match this size, or scale up",
-                    ].map((item) => (
-                      <div key={item} className="flex items-start gap-3">
-                        <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                        <span>{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
               </div>
             </motion.div>
 
             <div className="space-y-6">
               <motion.div
-                className="rounded-[2rem] gradient-dark p-7 text-primary-foreground shadow-[0_18px_60px_rgba(4,12,22,0.2)] md:p-8"
+                className="rounded-[2rem] border border-border bg-card p-6 shadow-[0_14px_42px_rgba(15,23,42,0.06)] md:p-7"
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
               >
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-primary-foreground/[0.82]">
-                  <CircleDollarSign className="h-4 w-4 text-solar-yellow" />
-                  What your consultation includes
+                <div className="inline-flex items-center gap-2 rounded-full bg-primary/[0.08] px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-primary">
+                  <CircleDollarSign className="h-4 w-4" />
+                  Estimated Results
                 </div>
-                <h2 className="mt-5 text-3xl font-extrabold leading-tight">A quote should reduce uncertainty, not add to it.</h2>
-                <div className="mt-6 space-y-4">
-                  {quoteChecklist.map((item) => (
-                    <div key={item} className="flex items-start gap-3 rounded-[1.35rem] border border-white/10 bg-white/[0.06] px-4 py-4">
-                      <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-solar-yellow" />
-                      <span className="text-sm leading-7 text-primary-foreground/[0.84]">{item}</span>
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  {[
+                    { label: "Recommended System", value: `${(Math.round(recommendedKw * 10) / 10).toLocaleString("en-IN")} kW (${systemType})`, icon: SunMedium },
+                    { label: "Govt Subsidy", value: formatCurrency(subsidy), icon: CircleDollarSign },
+                    { label: "Estimated Payback", value: `${(Math.round(paybackYears * 10) / 10).toLocaleString("en-IN")} years`, icon: ShieldCheck },
+                    { label: "Annual Savings", value: formatCurrency(annualSavings), icon: BadgeCheck },
+                    { label: "Total Investment", value: formatCurrency(estimatedInvestment), icon: Wrench },
+                    { label: "Roof Area Need", value: `${Math.round(roofAreaSqFt).toLocaleString("en-IN")} sq ft`, icon: Home },
+                  ].map((item) => (
+                    <div key={item.label} className="rounded-xl border border-border bg-muted/[0.3] p-4">
+                      <item.icon className="h-4 w-4 text-primary" />
+                      <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">{item.label}</p>
+                      <p className="mt-1 text-base font-extrabold text-foreground">{item.value}</p>
                     </div>
                   ))}
                 </div>
               </motion.div>
 
               <motion.div
-                className="rounded-[2rem] border border-border bg-card p-7 shadow-[0_14px_42px_rgba(15,23,42,0.06)] md:p-8"
+                className="rounded-[2rem] gradient-dark p-7 text-primary-foreground shadow-[0_18px_60px_rgba(4,12,22,0.2)] md:p-8"
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.08 }}
               >
-                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">Need answers quickly?</div>
-                <h2 className="mt-4 text-2xl font-extrabold text-foreground">Talk to a local solar advisor and move faster.</h2>
-                <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                  This new layout pushes trust, clarity, and action harder so the page behaves more like a conversion-focused solar landing page.
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-primary-foreground/[0.82]">
+                  <MapPin className="h-4 w-4 text-solar-yellow" />
+                  Consultation Direction
+                </div>
+                <h2 className="mt-5 text-3xl font-extrabold leading-tight">Suntech Green Energy will validate this with your real rooftop data.</h2>
+                <p className="mt-3 text-sm leading-7 text-primary-foreground/[0.8]">
+                  Net investment after subsidy is currently around <span className="font-bold text-solar-yellow">{formatCurrency(investmentAfterSubsidy)}</span>.
+                  Our team can fine-tune this using roof measurements, sanctioned load, and usage timing.
                 </p>
+
+                <div className="mt-5 space-y-3">
+                  {[
+                    includeMsebPaperwork
+                      ? "Mahavitaran paperwork and net-metering process support included."
+                      : "Mahavitaran paperwork support excluded from this estimate.",
+                    hasLoadShedding
+                      ? "Backup-first recommendation enabled: Hybrid + Battery."
+                      : "Grid-first recommendation enabled: On-Grid system.",
+                  ].map((item) => (
+                    <div key={item} className="flex items-start gap-3 rounded-[1.2rem] border border-white/10 bg-white/[0.06] px-4 py-3">
+                      <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-solar-yellow" />
+                      <span className="text-sm leading-7 text-primary-foreground/[0.84]">{item}</span>
+                    </div>
+                  ))}
+                </div>
+
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link
                     to="/contact"
-                    className="inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
+                    className="gradient-cta inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold text-foreground transition-colors"
                   >
                     Get detailed estimate
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                   <a
                     href={`tel:${companyProfile.phone.replace(/\s+/g, "")}`}
-                    className="inline-flex items-center gap-2 rounded-2xl border border-border px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+                    className="inline-flex items-center gap-2 rounded-2xl border border-primary-foreground/20 px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-foreground/10"
                   >
                     Call {companyProfile.shortName}
                   </a>
                 </div>
               </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-muted/[0.45] py-20">
-        <div className="container mx-auto px-4">
-          <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-stretch">
-            <div>
-              <SectionHeading
-                tag="Process"
-                title="A cleaner solar journey from the first visit to final activation"
-                subtitle="The structure below is intentionally more landing-page friendly: easy to scan, easy to trust, and much clearer about what happens next."
-                center={false}
-              />
-
-              <div className="space-y-4">
-                {processSteps.map((step, index) => (
-                  <motion.div
-                    key={step.number}
-                    className="lift-card rounded-[1.7rem] border border-border bg-card p-6 shadow-[0_12px_32px_rgba(15,23,42,0.06)]"
-                    initial={{ opacity: 0, x: -18 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: index * 0.08 }}
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-base font-extrabold text-primary">
-                        {step.number}
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-extrabold text-foreground">{step.title}</h3>
-                        <p className="mt-2 text-sm leading-7 text-muted-foreground">{step.description}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            <div
-              className={`grid h-full gap-4 ${
-                galleryLayout === "masonry" ? "md:auto-rows-fr md:grid-cols-[1.05fr_0.95fr]" : ""
-              } ${galleryLayout === "split" ? "md:grid-cols-[1.05fr_0.95fr]" : ""}`}
-            >
-              {galleryProjects[0] ? (
-                <motion.div
-                  className={`group relative h-full overflow-hidden rounded-[2rem] border border-border shadow-[0_18px_50px_rgba(15,23,42,0.09)] ${
-                    galleryLayout === "masonry" ? "md:row-span-2" : ""
-                  }`}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                >
-                  <img
-                    src={resolveContentImageUrl(galleryProjects[0].imageUrl)}
-                    alt={galleryProjects[0].title}
-                    className={`w-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      galleryLayout === "masonry"
-                        ? "h-full min-h-[24rem]"
-                        : galleryLayout === "split"
-                          ? "h-full min-h-[32rem]"
-                          : "h-full min-h-[34rem]"
-                    }`}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-solar-dark via-solar-dark/20 to-transparent" />
-                  <div className="absolute inset-x-0 bottom-0 p-6">
-                    <div className="inline-flex rounded-full bg-white/[0.88] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-                      {galleryProjects[0].category}
-                    </div>
-                    <h3 className="mt-4 text-2xl font-extrabold text-primary-foreground">{galleryProjects[0].title}</h3>
-                    <div className="mt-2 flex items-center gap-2 text-sm text-primary-foreground/[0.78]">
-                      <MapPin className="h-4 w-4 text-solar-yellow" />
-                      {galleryProjects[0].location}
-                    </div>
-                    <div className="mt-4 inline-flex rounded-full gradient-cta px-4 py-2 text-sm font-bold text-foreground shadow-lg">
-                      {galleryProjects[0].capacity}
-                    </div>
-                  </div>
-                </motion.div>
-              ) : null}
-
-              {secondaryGalleryProjects.map((project, index) => (
-                <motion.div
-                  key={`${project.id ?? project.title}-${index}`}
-                  className="group relative h-full overflow-hidden rounded-[2rem] border border-border shadow-[0_18px_50px_rgba(15,23,42,0.08)]"
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.08 }}
-                >
-                  <img
-                    src={resolveContentImageUrl(project.imageUrl)}
-                    alt={project.title}
-                    className={`w-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      galleryLayout === "masonry" ? "h-full min-h-[18rem]" : "h-full min-h-[32rem]"
-                    }`}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-solar-dark via-solar-dark/[0.18] to-transparent" />
-                  <div className="absolute inset-x-0 bottom-0 p-5">
-                    <div className="inline-flex rounded-full bg-white/[0.88] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
-                      {project.category}
-                    </div>
-                    <h3 className="mt-3 text-xl font-extrabold text-primary-foreground">{project.title}</h3>
-                    <div className="mt-2 flex items-center justify-between gap-3 text-sm text-primary-foreground/[0.78]">
-                      <span className="inline-flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-solar-yellow" />
-                        {project.location}
-                      </span>
-                      <span className="font-bold text-solar-yellow">{project.capacity}</span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
             </div>
           </div>
         </div>
@@ -907,67 +790,45 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="py-20">
+      <section className="bg-muted/[0.3] py-20">
         <div className="container mx-auto px-4">
-          <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-            <div>
-              <SectionHeading
-                tag="FAQ"
-                title="Common questions, now inside a cleaner and better-spaced layout"
-                subtitle="This keeps the page conversion-friendly while still answering the doubts people usually have before booking a visit."
-                center={false}
-              />
+          <SectionHeading
+            tag="FAQ"
+            title="Frequently Asked Questions"
+            subtitle="All your key rooftop solar questions for Pune and PCMC, answered clearly."
+          />
 
-              <div className="rounded-[2rem] border border-border bg-muted/[0.35] p-7">
-                <div className="text-sm leading-7 text-muted-foreground">
-                  Good solar pages work best when trust, clarity, proof, and FAQs all support one another. This redesign now pushes that pattern much more clearly.
-                </div>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <Link
-                    to="/contact"
-                    className="inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
-                  >
-                    Schedule free visit
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                  <Link
-                    to="/about#reviews"
-                    className="inline-flex items-center gap-2 rounded-2xl border border-border px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
-                  >
-                    Read customer feedback
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            <motion.div
-              className="rounded-[2rem] border border-border bg-card p-7 shadow-[0_16px_42px_rgba(15,23,42,0.06)] md:p-8"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <Accordion type="single" collapsible className="space-y-2">
-                {faqItems.map((item, index) => (
-                  <AccordionItem
-                    key={item.question}
-                    value={`faq-${index}`}
-                    className="rounded-[1.35rem] border border-border px-5 data-[state=open]:bg-muted/[0.35]"
-                  >
-                    <AccordionTrigger className="py-5 text-left text-base font-bold text-foreground hover:no-underline">
-                      {item.question}
-                    </AccordionTrigger>
-                    <AccordionContent className="pb-5 text-sm leading-7 text-muted-foreground">{item.answer}</AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </motion.div>
-          </div>
+          <motion.div
+            className="mx-auto mt-10 max-w-4xl rounded-[2rem] border border-border bg-card p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)] md:p-8"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <Accordion type="single" collapsible className="space-y-3">
+              {faqItems.map((item, index) => (
+                <AccordionItem
+                  key={item.question}
+                  value={`faq-${index}`}
+                  className="rounded-[1.25rem] border border-border px-5 data-[state=open]:bg-muted/40"
+                >
+                  <AccordionTrigger className="py-5 text-left text-base font-bold text-foreground hover:no-underline">
+                    {item.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-5 text-sm leading-7 text-muted-foreground">{item.answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </motion.div>
         </div>
       </section>
 
       <section className="pb-20 pt-4">
         <div className="container mx-auto px-4">
           <div className="relative overflow-hidden rounded-[2rem] gradient-dark px-8 py-10 text-primary-foreground shadow-[0_24px_70px_rgba(2,12,27,0.25)] md:px-12 md:py-12">
+            <div className="absolute inset-0" aria-hidden="true">
+              <img src={heroResidential} alt="" className="h-full w-full object-cover object-center" loading="lazy" />
+              <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,10,18,0.9)_0%,rgba(4,10,18,0.78)_38%,rgba(4,10,18,0.62)_100%)]" />
+            </div>
             <div className="absolute inset-0 solar-grid opacity-20" />
             <div className="sunbeam -right-8 top-0 h-40 w-40 bg-solar-orange/[0.18]" />
 
@@ -978,10 +839,10 @@ const Index = () => {
                   Ready to go solar
                 </div>
                 <h2 className="mt-5 text-3xl font-extrabold leading-tight md:text-5xl">
-                  The homepage now feels sharper. Next step: turn that into more enquiries.
+                  Turn rooftop interest into real enquiries.
                 </h2>
                 <p className="mt-4 text-base leading-8 text-primary-foreground/[0.8] md:text-lg">
-                  Book a free site visit, talk through your roof and bill, and let the new landing-page flow do a better job of building confidence.
+                  Book a free site visit and get a clear savings-first plan for your roof.
                 </p>
               </div>
 
@@ -1009,3 +870,4 @@ const Index = () => {
 };
 
 export default Index;
+

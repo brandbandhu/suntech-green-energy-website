@@ -27,6 +27,8 @@ export type LeadRecord = {
   name: string;
   email: string | null;
   phone: string;
+  pin_code: string | null;
+  city: string | null;
   monthly_bill: number | null;
   message: string | null;
   source_page: string | null;
@@ -99,6 +101,8 @@ export type LeadSubmissionInput = {
   name: string;
   email?: string;
   phone: string;
+  pinCode?: string;
+  city?: string;
   bill?: string;
   message?: string;
   sourcePage?: string;

@@ -21,11 +21,14 @@ let pool: mysql.Pool | null = null;
 
 const managedDefaultProjectTitles = [
   "Villa Rooftop Solar",
+  "Manjari Residential Rooftop, Pune",
   "Apartment Complex",
   "IT Office Campus",
   "Shopping Mall",
+  "Manjari Green Ph 4, Hadapsar",
   "Factory Rooftop",
   "Warehouse Solar",
+  "Manjari Green Phase 5, Hadapsar",
 ];
 
 const migrationStatements = [
@@ -43,6 +46,8 @@ const migrationStatements = [
     name VARCHAR(160) NOT NULL,
     email VARCHAR(190) NULL,
     phone VARCHAR(50) NOT NULL,
+    pin_code VARCHAR(12) NULL,
+    city VARCHAR(80) NULL,
     monthly_bill DECIMAL(10,2) NULL,
     message TEXT NULL,
     source_page VARCHAR(255) NULL,
@@ -318,6 +323,32 @@ const ensureGoogleReviewColumns = async (db: mysql.Pool) => {
   }
 };
 
+const ensureLeadLocationColumns = async (db: mysql.Pool) => {
+  const [pinCodeRows] = await db.query<any[]>(
+    `SELECT COUNT(*) AS total
+     FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE()
+       AND TABLE_NAME = 'leads'
+       AND COLUMN_NAME = 'pin_code'`,
+  );
+
+  if (Number(pinCodeRows[0]?.total ?? 0) === 0) {
+    await db.execute("ALTER TABLE leads ADD COLUMN pin_code VARCHAR(12) NULL AFTER phone");
+  }
+
+  const [cityRows] = await db.query<any[]>(
+    `SELECT COUNT(*) AS total
+     FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE()
+       AND TABLE_NAME = 'leads'
+       AND COLUMN_NAME = 'city'`,
+  );
+
+  if (Number(cityRows[0]?.total ?? 0) === 0) {
+    await db.execute("ALTER TABLE leads ADD COLUMN city VARCHAR(80) NULL AFTER pin_code");
+  }
+};
+
 export const initDatabase = async () => {
   if (!config.databaseUrl) {
     throw new Error(
@@ -346,6 +377,7 @@ export const initDatabase = async () => {
   });
 
   await runMigrations(pool);
+  await ensureLeadLocationColumns(pool);
   await ensureGoogleReviewColumns(pool);
   await insertSettingsIfMissing(pool);
   await seedAdminIfMissing(pool);

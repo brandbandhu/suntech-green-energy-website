@@ -33,6 +33,8 @@ const leadSchema = z.object({
   name: z.string().trim().min(2).max(160),
   email: z.string().trim().email().optional().or(z.literal("")),
   phone: z.string().trim().min(8).max(50),
+  pinCode: z.string().trim().max(12).optional().or(z.literal("")),
+  city: z.string().trim().max(80).optional().or(z.literal("")),
   bill: z.union([z.number(), z.string()]).optional().nullable(),
   message: z.string().trim().max(1000).optional().or(z.literal("")),
   sourcePage: z.string().trim().max(255).optional().or(z.literal("")),
@@ -310,12 +312,14 @@ app.post("/api/leads", async (req, res, next) => {
     const db = getDb();
     const [result] = await db.execute<ResultSetHeader>(
       `INSERT INTO leads
-        (name, email, phone, monthly_bill, message, source_page, referrer, utm_source, utm_medium, utm_campaign)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        (name, email, phone, pin_code, city, monthly_bill, message, source_page, referrer, utm_source, utm_medium, utm_campaign)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         parsed.name,
         parsed.email || null,
         parsed.phone,
+        parsed.pinCode || null,
+        parsed.city || null,
         toNumberOrNull(parsed.bill),
         parsed.message || null,
         parsed.sourcePage || null,
@@ -332,6 +336,8 @@ app.post("/api/leads", async (req, res, next) => {
       name: parsed.name,
       email: parsed.email || null,
       phone: parsed.phone,
+      pinCode: parsed.pinCode || null,
+      city: parsed.city || null,
       monthlyBill: toNumberOrNull(parsed.bill),
       message: parsed.message || null,
       sourcePage: parsed.sourcePage || null,

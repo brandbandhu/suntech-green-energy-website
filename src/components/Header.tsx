@@ -1,18 +1,24 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, Phone, X, ChevronRight } from "lucide-react";
+import { Building2, ChevronDown, ChevronRight, Home, MapPin, Menu, Phone, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import logo from "@/assets/suntech logo.png";
 import { usePublicContent } from "@/hooks/use-public-content";
 import { toPhoneHref } from "@/lib/contact-utils";
 
-const navLinks = [
+const primaryLinks = [
   { label: "Home", path: "/" },
-  { label: "Residential", path: "/residential" },
-  { label: "Commercial", path: "/commercial" },
   { label: "Projects", path: "/projects" },
-  { label: "About", path: "/about" },
-  { label: "Contact", path: "/contact" },
+];
+
+const offeringLinks = [
+  { label: "Homes", path: "/residential", icon: Home },
+  { label: "Housing Society", path: "/residential?segment=housing-society", icon: Building2 },
+];
+
+const cityLinks = [
+  { label: "Pune", path: "/contact?city=Pune", icon: MapPin },
+  { label: "PCMC", path: "/contact?city=PCMC", icon: MapPin },
 ];
 
 const Header = () => {
@@ -32,20 +38,19 @@ const Header = () => {
   }, [location.pathname, location.hash]);
 
   const phoneHref = toPhoneHref(data.companyProfile.phone);
-  const isLinkActive = (path: string) => {
-    const [pathname, hash] = path.split("#");
+  const isPathActive = (path: string) => {
+    const [pathnameWithQuery, hash] = path.split("#");
+    const pathname = pathnameWithQuery.split("?")[0];
 
     if (hash) {
       return location.pathname === pathname && location.hash === `#${hash}`;
     }
 
-    if (pathname === "/about") {
-      return location.pathname === pathname && location.hash !== "#reviews";
-    }
-
     return location.pathname === pathname;
   };
-  const navItems = navLinks.map((link) => ({ ...link, active: isLinkActive(link.path) }));
+  const navItems = primaryLinks.map((link) => ({ ...link, active: isPathActive(link.path) }));
+  const offeringsActive = offeringLinks.some((link) => isPathActive(link.path));
+  const citiesActive = cityLinks.some((link) => isPathActive(link.path));
 
   return (
     <header
@@ -75,12 +80,57 @@ const Header = () => {
               ) : null}
             </Link>
           ))}
+
+          <div className="group relative">
+            <button
+              type="button"
+              className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium transition-all duration-300 ${
+                offeringsActive ? "text-primary" : "text-solar-green hover:bg-solar-green/10 hover:text-solar-green"
+              }`}
+            >
+              Our Offerings
+              <ChevronDown className="h-4 w-4" />
+            </button>
+            <div className="pointer-events-none absolute left-0 top-full z-30 mt-3 w-64 -translate-y-1 rounded-2xl border border-border bg-card p-2 opacity-0 shadow-[0_18px_42px_rgba(12,20,31,0.1)] transition-all duration-200 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
+              {offeringLinks.map((item) => (
+                <Link
+                  key={item.label}
+                  to={item.path}
+                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-solar-green transition-colors hover:bg-muted"
+                >
+                  <item.icon className="h-4 w-4 text-primary" />
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="group relative">
+            <button
+              type="button"
+              className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium transition-all duration-300 ${
+                citiesActive ? "text-primary" : "text-solar-green hover:bg-solar-green/10 hover:text-solar-green"
+              }`}
+            >
+              Cities
+              <ChevronDown className="h-4 w-4" />
+            </button>
+            <div className="pointer-events-none absolute left-0 top-full z-30 mt-3 w-56 -translate-y-1 rounded-2xl border border-border bg-card p-2 opacity-0 shadow-[0_18px_42px_rgba(12,20,31,0.1)] transition-all duration-200 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
+              {cityLinks.map((item) => (
+                <Link
+                  key={item.label}
+                  to={item.path}
+                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-solar-green transition-colors hover:bg-muted"
+                >
+                  <item.icon className="h-4 w-4 text-primary" />
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
         </nav>
 
         <div className="hidden items-center gap-4 lg:flex">
-          <div className="rounded-full border border-primary/15 bg-primary/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-primary">
-            Pune rooftop solar
-          </div>
           <a href={phoneHref} className="flex items-center gap-2 text-sm font-medium text-solar-green transition-colors hover:text-solar-green">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
               <Phone className="h-3.5 w-3.5 text-primary" />
@@ -127,6 +177,46 @@ const Header = () => {
                   </Link>
                 </motion.div>
               ))}
+              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.18 }}>
+                <div className="rounded-xl border border-border bg-muted/30 px-4 py-3">
+                  <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Our Offerings</div>
+                  <div className="mt-2 space-y-1.5">
+                    {offeringLinks.map((item) => (
+                      <Link
+                        key={item.label}
+                        to={item.path}
+                        className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-solar-green transition-colors hover:bg-solar-green/5"
+                      >
+                        <span className="inline-flex items-center gap-2">
+                          <item.icon className="h-4 w-4 text-primary" />
+                          {item.label}
+                        </span>
+                        <ChevronRight className="h-4 w-4 text-solar-green opacity-40" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.22 }}>
+                <div className="rounded-xl border border-border bg-muted/30 px-4 py-3">
+                  <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Cities</div>
+                  <div className="mt-2 space-y-1.5">
+                    {cityLinks.map((item) => (
+                      <Link
+                        key={item.label}
+                        to={item.path}
+                        className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-solar-green transition-colors hover:bg-solar-green/5"
+                      >
+                        <span className="inline-flex items-center gap-2">
+                          <item.icon className="h-4 w-4 text-primary" />
+                          {item.label}
+                        </span>
+                        <ChevronRight className="h-4 w-4 text-solar-green opacity-40" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
               <div className="mt-2 border-t border-border pt-3">
                 <a href={phoneHref} className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-solar-green/90">
                   <Phone className="h-4 w-4 text-solar-green" /> {data.companyProfile.phone}

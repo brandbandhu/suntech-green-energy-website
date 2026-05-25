@@ -7,6 +7,8 @@ type LeadPayload = {
   name: string;
   email: string | null;
   phone: string;
+  pinCode: string | null;
+  city: string | null;
   monthlyBill: number | null;
   message: string | null;
   sourcePage: string | null;
@@ -31,6 +33,8 @@ const formatLeadBody = (lead: LeadPayload) => [
   `Name: ${lead.name}`,
   `Email: ${lead.email || "Not provided"}`,
   `Phone: ${lead.phone}`,
+  `PIN Code: ${lead.pinCode || "Not provided"}`,
+  `City: ${lead.city || "Not provided"}`,
   `Monthly Bill: ${lead.monthlyBill != null ? `Rs ${lead.monthlyBill}` : "Not provided"}`,
   `Message: ${lead.message || "Not provided"}`,
   `Source Page: ${lead.sourcePage || "Unknown"}`,
