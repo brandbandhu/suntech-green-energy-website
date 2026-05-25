@@ -9,8 +9,8 @@ import {
   CircleDollarSign,
   Factory,
   Home,
+  IndianRupee,
   MapPin,
-  PhoneCall,
   ShieldCheck,
   Sparkles,
   SunMedium,
@@ -20,8 +20,13 @@ import LeadForm from "@/components/LeadForm";
 import SectionHeading from "@/components/SectionHeading";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import heroCommercial from "@/assets/hero-commercial.jpg";
+import customerSatisfactionIcon from "@/assets/customer_satisfaction-removebg-preview.png";
+import experienceIcon from "@/assets/experience-removebg-preview.png";
+import heroHomeBanner from "@/assets/hero-home-banner.jpg";
 import heroIndustrial from "@/assets/hero-industrial.jpg";
 import heroResidential from "@/assets/hero-residential.jpg";
+import homeSolarizeIcon from "@/assets/home_solarize-removebg-preview.png";
+import powerInstalledIcon from "@/assets/power_installed-removebg-preview.png";
 import { usePublicContent } from "@/hooks/use-public-content";
 import { resolveContentImageUrl } from "@/lib/default-content";
 
@@ -58,11 +63,11 @@ const solutionCards = [
   },
 ];
 
-const heroBackgroundImage = heroResidential;
+const heroBackgroundImage = heroHomeBanner;
 
 const heroQuickCards = [
   {
-    icon: CircleDollarSign,
+    icon: IndianRupee,
     title: "Savings-led proposals",
     description: "Bill-based recommendation.",
   },
@@ -90,7 +95,7 @@ const whyChooseCards = [
     description: "From site survey to commissioning, we keep each step transparent so your family or committee can decide confidently.",
   },
   {
-    icon: CircleDollarSign,
+    icon: IndianRupee,
     title: "Savings-focused recommendations",
     description: "System sizing is matched to your real consumption, roof area, and budget so payback and savings stay practical.",
   },
@@ -197,8 +202,7 @@ const Index = () => {
   const [includeMsebPaperwork, setIncludeMsebPaperwork] = useState(true);
   const [calculatorAddress, setCalculatorAddress] = useState("");
 
-  const { aboutPage, companyProfile } = data;
-  const yearsInBusiness = Math.max(1, new Date().getFullYear() - companyProfile.yearEstablished);
+  const { companyProfile } = data;
   const preferredProjects = data.projects.filter((project) => project.isFeatured !== false);
   const featuredProjects = (preferredProjects.length > 0 ? preferredProjects : data.projects).slice(0, 3);
 
@@ -221,27 +225,27 @@ const Index = () => {
       countTo: 500,
       suffix: "+",
       detail: "Trusted installations delivered for families across Pune and nearby service areas.",
-      icon: Home,
+      iconImage: homeSolarizeIcon,
     },
     {
       label: "Power Installed",
       countTo: 1,
       suffix: " MW",
       detail: "Total rooftop capacity installed with quality-driven engineering and execution standards.",
-      icon: SunMedium,
+      iconImage: powerInstalledIcon,
     },
     {
-      label: "Years in Business",
-      countTo: yearsInBusiness,
-      suffix: "+",
-      detail: "Consistent delivery and support since the year we started in Pune.",
-      icon: ShieldCheck,
+      label: "Customer Satisfaction",
+      countTo: 100,
+      suffix: "%",
+      detail: "Trusted service experience with quality execution and dependable support.",
+      iconImage: customerSatisfactionIcon,
     },
     {
       label: "Portfolio Highlights",
       countTo: Math.max(featuredProjects.length, 1),
       detail: "Real project cards showcasing installation quality and location coverage.",
-      icon: BadgeCheck,
+      iconImage: experienceIcon,
     },
   ];
 
@@ -268,13 +272,13 @@ const Index = () => {
         <div className="container relative z-10 mx-auto px-4">
           <div className="grid gap-12 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
             <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65 }}>
-              <h1 className="mt-2 max-w-4xl text-3xl font-extrabold leading-[1.02] text-primary-foreground md:text-5xl lg:text-6xl">
+              <h1 className="mt-2 max-w-4xl text-2xl font-extrabold leading-[1.02] text-primary-foreground md:text-4xl lg:text-5xl">
                 Solar in Pune, designed around savings instead of sales pressure.
               </h1>
 
               <p className="mt-6 max-w-2xl text-base leading-7 text-primary-foreground/[0.78] md:text-lg">
-                Suntech Green Energy plans rooftop solar for homes, businesses, and industrial roofs with stronger visual polish, clearer guidance,
-                better trust-building, and a process that feels easier from site visit to activation.
+                Suntech Green Energy delivers rooftop solar for homes, businesses, and industries with clear guidance, clean execution, and
+                smooth support from site survey to activation.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-4">
@@ -332,16 +336,6 @@ const Index = () => {
               <div className="relative overflow-hidden rounded-[2rem] border border-white/[0.14] bg-white/[0.96] p-6 shadow-[0_28px_90px_rgba(0,0,0,0.28)] backdrop-blur-xl md:p-8">
                 <div className="absolute inset-x-0 top-0 h-1.5 gradient-cta" />
 
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <div className="inline-flex items-center gap-2 rounded-full bg-primary/[0.08] px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-primary">
-                    <SunMedium className="h-4 w-4" />
-                    Free consultation
-                  </div>
-                  <div className="rounded-full border border-border bg-muted/40 px-4 py-2 text-sm font-semibold text-foreground">
-                    Trusted consultation
-                  </div>
-                </div>
-
                 <div className="mt-6">
                   <LeadForm compact showConsultationHeader />
                 </div>
@@ -355,10 +349,10 @@ const Index = () => {
                       loading="lazy"
                     />
                     <div className="min-w-0">
-                      <div className="text-base font-extrabold text-[#1d2942] sm:text-[1.65rem] sm:leading-tight">Curious about solar savings?</div>
+                      <div className="text-[0.88rem] font-extrabold text-[#1d2942] sm:text-[1.35rem] sm:leading-tight">Curious about solar savings?</div>
                       <a
                         href="#solar-calculator"
-                        className="mt-2 inline-flex items-center gap-2 text-sm font-bold text-[#1f35b3] transition-colors hover:text-[#1a2b8e] sm:text-xl"
+                        className="mt-2 inline-flex items-center gap-2 text-[0.82rem] font-bold text-[#1f35b3] transition-colors hover:text-[#1a2b8e] sm:text-base"
                       >
                         Try Solar Calculator
                         <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -385,9 +379,9 @@ const Index = () => {
                 transition={{ duration: 0.45, delay: index * 0.07 }}
               >
                 <div className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[linear-gradient(145deg,rgba(27,151,94,0.2),rgba(27,151,94,0.08))] ring-1 ring-primary/25 shadow-[0_10px_24px_rgba(12,22,36,0.14)]">
-                  <stat.icon className="h-6 w-6 text-primary" />
+                  <img src={stat.iconImage} alt={`${stat.label} icon`} className="h-7 w-7 object-contain" loading="lazy" />
                 </div>
-                <div className="mt-5 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">{stat.label}</div>
+                <div className="mt-5 text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground">{stat.label}</div>
                 <div className="mt-3 text-4xl font-extrabold leading-none text-primary">
                   <AnimatedCounter target={stat.countTo} suffix={stat.suffix} />
                 </div>
@@ -403,36 +397,27 @@ const Index = () => {
           <div className="grid gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-end">
             <div>
               <SectionHeading
-                tag="About Suntech Green Energy"
-                title="Our History of Solar Excellence Since 2020"
-                subtitle="Suntech Green Energy started in 2020 with a clear mission: make reliable solar practical for homes, businesses, and industries through honest guidance and quality execution."
+                title="About Suntech Green Energy"
+                subtitle="At Suntech Green Energy, we have been delivering dependable solar energy solutions since 2020 with a commitment to quality, transparency, and customer satisfaction. Our goal is to make clean and cost-effective solar power accessible for homes, commercial spaces, and industries through expert consultation, advanced technology, and efficient project execution tailored to every customer’s energy needs."
                 center={false}
               />
             </div>
 
             <motion.div
-              className="relative overflow-hidden rounded-[2rem] gradient-dark p-7 text-primary-foreground shadow-[0_18px_60px_rgba(10,20,32,0.18)] md:p-8"
+              className="relative overflow-hidden rounded-[2rem] gradient-dark shadow-[0_18px_60px_rgba(10,20,32,0.18)]"
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
               <div className="sunbeam -right-10 top-0 h-36 w-36 bg-solar-orange/[0.18]" />
-              <div className="relative z-10">
-                <div className="text-xs font-semibold uppercase tracking-[0.26em] text-primary-foreground/[0.68]">Our Journey</div>
-                <h2 className="mt-4 text-3xl font-extrabold leading-tight md:text-4xl">
-                  {aboutPage.storyTitle || "Suntech Green Energy: Solar Excellence Since 2020"}
-                </h2>
-                <p className="mt-4 text-base leading-8 text-primary-foreground/[0.8]">{aboutPage.storyParagraph1}</p>
-                <div className="mt-6 flex flex-wrap gap-3 text-sm text-primary-foreground/80">
-                  <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2">
-                    <MapPin className="h-4 w-4 text-solar-yellow" />
-                    Pune and nearby regions
-                  </div>
-                  <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2">
-                    <PhoneCall className="h-4 w-4 text-solar-yellow" />
-                    {companyProfile.phone}
-                  </div>
-                </div>
+              <div className="relative z-10 overflow-hidden rounded-[2rem]">
+                <img
+                  src={heroCommercial}
+                  alt="Suntech rooftop solar installation"
+                  className="h-[280px] w-full object-cover md:h-[380px]"
+                  loading="lazy"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-solar-dark/30 to-transparent" />
               </div>
             </motion.div>
           </div>
@@ -463,13 +448,13 @@ const Index = () => {
                     <h3 className="text-2xl font-extrabold text-foreground">{card.title}</h3>
                     <p className="mt-3 text-sm leading-7 text-muted-foreground">{card.description}</p>
 
-                    <div className="mt-5 flex flex-wrap gap-2">
+                    <ul className="mt-5 list-disc space-y-2 pl-5">
                       {card.highlights.map((item) => (
-                        <div key={item} className="rounded-full bg-primary/[0.07] px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
+                        <li key={item} className="text-sm font-bold uppercase tracking-[0.08em] text-primary">
                           {item}
-                        </div>
+                        </li>
                       ))}
-                    </div>
+                    </ul>
 
                     <div className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-primary transition-all group-hover:gap-3">
                       View solution
@@ -486,7 +471,6 @@ const Index = () => {
       <section className="bg-muted/[0.45] py-20">
         <div className="container mx-auto px-4">
           <SectionHeading
-            tag="Why Choose Us"
             title={`Why ${companyProfile.shortName} Feels Reliable From Day One`}
             subtitle="Professional solar guidance, transparent execution, and dependable support for homes and housing societies."
           />
@@ -510,16 +494,6 @@ const Index = () => {
             ))}
           </div>
 
-          <div className="mx-auto mt-10 grid max-w-4xl gap-4 rounded-[1.8rem] border border-border bg-card/80 p-6 shadow-[0_12px_30px_rgba(15,23,42,0.05)] sm:grid-cols-2">
-            <div className="rounded-[1.2rem] bg-muted/35 p-4">
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Working Hours</div>
-              <div className="mt-2 text-base font-semibold text-foreground">{companyProfile.workingHours}</div>
-            </div>
-            <div className="rounded-[1.2rem] bg-muted/35 p-4">
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Support Line</div>
-              <div className="mt-2 text-base font-semibold text-foreground">{companyProfile.phone}</div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -676,55 +650,6 @@ const Index = () => {
                 </div>
               </motion.div>
 
-              <motion.div
-                className="rounded-[2rem] gradient-dark p-7 text-primary-foreground shadow-[0_18px_60px_rgba(4,12,22,0.2)] md:p-8"
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.08 }}
-              >
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-primary-foreground/[0.82]">
-                  <MapPin className="h-4 w-4 text-solar-yellow" />
-                  Consultation Direction
-                </div>
-                <h2 className="mt-5 text-3xl font-extrabold leading-tight">Suntech Green Energy will validate this with your real rooftop data.</h2>
-                <p className="mt-3 text-sm leading-7 text-primary-foreground/[0.8]">
-                  Net investment after subsidy is currently around <span className="font-bold text-solar-yellow">{formatCurrency(investmentAfterSubsidy)}</span>.
-                  Our team can fine-tune this using roof measurements, sanctioned load, and usage timing.
-                </p>
-
-                <div className="mt-5 space-y-3">
-                  {[
-                    includeMsebPaperwork
-                      ? "Mahavitaran paperwork and net-metering process support included."
-                      : "Mahavitaran paperwork support excluded from this estimate.",
-                    hasLoadShedding
-                      ? "Backup-first recommendation enabled: Hybrid + Battery."
-                      : "Grid-first recommendation enabled: On-Grid system.",
-                  ].map((item) => (
-                    <div key={item} className="flex items-start gap-3 rounded-[1.2rem] border border-white/10 bg-white/[0.06] px-4 py-3">
-                      <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-solar-yellow" />
-                      <span className="text-sm leading-7 text-primary-foreground/[0.84]">{item}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <Link
-                    to="/contact"
-                    className="gradient-cta inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold text-foreground transition-colors"
-                  >
-                    Get detailed estimate
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                  <a
-                    href={`tel:${companyProfile.phone.replace(/\s+/g, "")}`}
-                    className="inline-flex items-center gap-2 rounded-2xl border border-primary-foreground/20 px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-foreground/10"
-                  >
-                    Call {companyProfile.shortName}
-                  </a>
-                </div>
-              </motion.div>
             </div>
           </div>
         </div>
@@ -732,11 +657,7 @@ const Index = () => {
 
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <SectionHeading
-            tag="Project Proof"
-            title="Project cards now carry more depth, stronger contrast, and a clearer premium feel"
-            subtitle="The visual treatment has been pushed harder so the portfolio reads more confidently, closer to a polished solar conversion page."
-          />
+          <SectionHeading title="Our Projects" />
 
           <div className="grid gap-6 lg:grid-cols-3">
             {featuredProjects.map((project, index) => (
@@ -793,7 +714,6 @@ const Index = () => {
       <section className="bg-muted/[0.3] py-20">
         <div className="container mx-auto px-4">
           <SectionHeading
-            tag="FAQ"
             title="Frequently Asked Questions"
             subtitle="All your key rooftop solar questions for Pune and PCMC, answered clearly."
           />
@@ -858,7 +778,7 @@ const Index = () => {
                   to="/projects"
                   className="inline-flex items-center justify-center gap-2 rounded-2xl border border-primary-foreground/20 px-6 py-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-foreground/10"
                 >
-                  View project examples
+                  View projects
                 </Link>
               </div>
             </div>
