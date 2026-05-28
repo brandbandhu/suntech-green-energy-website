@@ -19,14 +19,11 @@ import {
 import LeadForm from "@/components/LeadForm";
 import SectionHeading from "@/components/SectionHeading";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import heroCommercial from "@/assets/hero-commercial.jpg";
-import customerSatisfactionIcon from "@/assets/customer_satisfaction-removebg-preview.png";
-import experienceIcon from "@/assets/experience-removebg-preview.png";
 import heroHomeBanner from "@/assets/hero-home-banner.jpg";
-import heroIndustrial from "@/assets/hero-industrial.jpg";
-import heroResidential from "@/assets/hero-residential.jpg";
-import homeSolarizeIcon from "@/assets/home_solarize-removebg-preview.png";
-import powerInstalledIcon from "@/assets/power_installed-removebg-preview.png";
+import aboutImage from "@/assets/about.png";
+import solarCommercialRooftop from "@/assets/solar-commercial-rooftop.jpg";
+import solarInstallationWorkers from "@/assets/solar-installation-workers.jpg";
+import solarSavingsFirst from "@/assets/Savings-first Design.png";
 import { usePublicContent } from "@/hooks/use-public-content";
 import { resolveContentImageUrl } from "@/lib/default-content";
 
@@ -36,7 +33,7 @@ const solutionCards = [
     eyebrow: "For homes",
     description:
       "Clean rooftop planning for villas, bungalows, and family homes that want visible bill relief without a messy installation experience.",
-    image: heroResidential,
+    image: solarInstallationWorkers,
     link: "/residential",
     icon: Home,
     highlights: ["Subsidy-first planning", "Cleaner cable routing", "Lower monthly bill pressure"],
@@ -46,7 +43,7 @@ const solutionCards = [
     eyebrow: "For businesses",
     description:
       "Daytime load-focused systems for schools, offices, clinics, and retail sites that need practical savings and stronger proposal clarity.",
-    image: heroCommercial,
+    image: solarCommercialRooftop,
     link: "/commercial",
     icon: Building2,
     highlights: ["Faster proposal clarity", "Load-based sizing", "Smarter operating-cost control"],
@@ -56,7 +53,7 @@ const solutionCards = [
     eyebrow: "For factories",
     description:
       "Structure-aware, output-focused solar for warehouses and sheds where safety, uptime, and long-term performance matter the most.",
-    image: heroIndustrial,
+    image: solarCommercialRooftop,
     link: "/commercial",
     icon: Factory,
     highlights: ["Structure-first execution", "Large roof planning", "High daytime usage advantage"],
@@ -225,27 +222,27 @@ const Index = () => {
       countTo: 500,
       suffix: "+",
       detail: "Trusted installations delivered for families across Pune and nearby service areas.",
-      iconImage: homeSolarizeIcon,
+      icon: Home,
     },
     {
       label: "Power Installed",
       countTo: 1,
       suffix: " MW",
       detail: "Total rooftop capacity installed with quality-driven engineering and execution standards.",
-      iconImage: powerInstalledIcon,
+      icon: SunMedium,
     },
     {
       label: "Customer Satisfaction",
       countTo: 100,
       suffix: "%",
       detail: "Trusted service experience with quality execution and dependable support.",
-      iconImage: customerSatisfactionIcon,
+      icon: BadgeCheck,
     },
     {
       label: "Portfolio Highlights",
       countTo: Math.max(featuredProjects.length, 1),
       detail: "Real project cards showcasing installation quality and location coverage.",
-      iconImage: experienceIcon,
+      icon: Sparkles,
     },
   ];
 
@@ -343,7 +340,7 @@ const Index = () => {
                 <div className="mt-5 rounded-[1.5rem] bg-[#eaf2ff] p-3.5">
                   <div className="flex items-center gap-3 rounded-2xl bg-[#e8f2ff] p-3 sm:gap-4 sm:p-4">
                     <img
-                      src={heroResidential}
+                      src={solarInstallationWorkers}
                       alt="Solar calculator"
                       className="h-16 w-28 rounded-xl object-cover sm:h-20 sm:w-32"
                       loading="lazy"
@@ -379,7 +376,7 @@ const Index = () => {
                 transition={{ duration: 0.45, delay: index * 0.07 }}
               >
                 <div className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[linear-gradient(145deg,rgba(27,151,94,0.2),rgba(27,151,94,0.08))] ring-1 ring-primary/25 shadow-[0_10px_24px_rgba(12,22,36,0.14)]">
-                  <img src={stat.iconImage} alt={`${stat.label} icon`} className="h-7 w-7 object-contain" loading="lazy" />
+                  <stat.icon className="h-7 w-7 text-primary" />
                 </div>
                 <div className="mt-5 text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground">{stat.label}</div>
                 <div className="mt-3 text-4xl font-extrabold leading-none text-primary">
@@ -412,7 +409,7 @@ const Index = () => {
               <div className="sunbeam -right-10 top-0 h-36 w-36 bg-solar-orange/[0.18]" />
               <div className="relative z-10 overflow-hidden rounded-[2rem]">
                 <img
-                  src={heroCommercial}
+                  src={aboutImage}
                   alt="Suntech rooftop solar installation"
                   className="h-[280px] w-full object-cover md:h-[380px]"
                   loading="lazy"
@@ -746,7 +743,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="relative overflow-hidden rounded-[2rem] gradient-dark px-8 py-10 text-primary-foreground shadow-[0_24px_70px_rgba(2,12,27,0.25)] md:px-12 md:py-12">
             <div className="absolute inset-0" aria-hidden="true">
-              <img src={heroResidential} alt="" className="h-full w-full object-cover object-center" loading="lazy" />
+              <img src={solarInstallationWorkers} alt="" className="h-full w-full object-cover object-center" loading="lazy" />
               <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,10,18,0.9)_0%,rgba(4,10,18,0.78)_38%,rgba(4,10,18,0.62)_100%)]" />
             </div>
             <div className="absolute inset-0 solar-grid opacity-20" />
@@ -790,4 +787,3 @@ const Index = () => {
 };
 
 export default Index;
-

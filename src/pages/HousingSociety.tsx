@@ -25,11 +25,10 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { toast } from "@/hooks/use-toast";
 import { getMarketingContext, trackEvent } from "@/lib/analytics";
 import { submitLead } from "@/lib/api";
-import heroResidential from "@/assets/hero-residential.jpg";
-import trustAfterSalesImage from "@/assets/trust-after-sales.webp";
-import trustGuaranteedSavingsImage from "@/assets/trust-guaranteed-savings.webp";
-import trustHassleFreeProcessImage from "@/assets/trust-hassle-free-process.webp";
-import trustStormProofImage from "@/assets/trust-storm-proof.webp";
+import trustAfterSalesImage from "@/assets/Reliable Service.png";
+import trustGuaranteedSavingsImage from "@/assets/Savings-first Design.png";
+import trustHassleFreeProcessImage from "@/assets/Hassle-free Process.png";
+import trustStormProofImage from "@/assets/Durable Structure.png";
 
 const projectImage = "/assets/project/DJI_20250609154417_0168_D.JPG.jpeg";
 const projectImageTwo = "/assets/project/DJI_20250609153027_0162_D.JPG.jpeg";
@@ -440,7 +439,7 @@ const HousingSociety = () => (
             </div>
           </div>
           <div className="overflow-hidden rounded-lg">
-            <img src={heroResidential} alt="Solar panels installed on a residential rooftop" className="h-[430px] w-full object-cover" loading="lazy" />
+            <img src={trustGuaranteedSavingsImage} alt="Solar panels installed on a rooftop" className="h-[430px] w-full object-cover" loading="lazy" />
           </div>
         </div>
       </div>

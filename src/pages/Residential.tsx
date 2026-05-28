@@ -26,12 +26,11 @@ import PageBanner from "@/components/PageBanner";
 import SectionHeading from "@/components/SectionHeading";
 import LeadForm from "@/components/LeadForm";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import trustAfterSalesImage from "@/assets/trust-after-sales.webp";
-import trustGuaranteedSavingsImage from "@/assets/trust-guaranteed-savings.webp";
-import trustHassleFreeProcessImage from "@/assets/trust-hassle-free-process.webp";
-import trustStormProofImage from "@/assets/trust-storm-proof.webp";
+import trustAfterSalesImage from "@/assets/Reliable Service.png";
+import trustGuaranteedSavingsImage from "@/assets/Savings-first Design.png";
+import trustHassleFreeProcessImage from "@/assets/Hassle-free Process.png";
+import trustStormProofImage from "@/assets/Durable Structure.png";
 import heroHomeBanner from "@/assets/hero-home-banner.jpg";
-import heroResidential from "@/assets/hero-residential.jpg";
 
 type Segment = "homes" | "housing-society";
 
@@ -639,7 +638,7 @@ const HomeOfferingPage = () => {
         <div className="container mx-auto px-4">
           <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
             <div className="overflow-hidden rounded-[2rem] border border-border shadow-[0_18px_50px_rgba(15,23,42,0.1)]">
-              <img src={heroResidential} alt="Residential rooftop solar installation" className="h-[440px] w-full object-cover" loading="lazy" />
+              <img src={trustHassleFreeProcessImage} alt="Residential rooftop solar installation" className="h-[440px] w-full object-cover" loading="lazy" />
             </div>
             <div>
               <SectionHeading center={false} title="The Suntech Advantage" subtitle="End-to-end management for homeowners who want solar savings without confusing vendor coordination." />
@@ -752,7 +751,7 @@ const HomeOfferingPage = () => {
       <section className="py-12">
         <div className="container mx-auto px-4">
           <div className="relative overflow-hidden rounded-[2rem] px-8 py-10 text-primary-foreground shadow-[0_24px_70px_rgba(2,12,27,0.25)] md:px-12">
-            <img src={heroResidential} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+            <img src={trustGuaranteedSavingsImage} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
             <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,10,18,0.92)_0%,rgba(4,10,18,0.76)_54%,rgba(4,10,18,0.68)_100%)]" />
             <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-2xl">
