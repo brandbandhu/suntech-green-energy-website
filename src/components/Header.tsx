@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Building2, ChevronDown, ChevronRight, Home, MapPin, Menu, Phone, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import logo from "@/assets/suntech logo.png";
+import SiteVisitDialog from "@/components/SiteVisitDialog";
 import { usePublicContent } from "@/hooks/use-public-content";
 import { toPhoneHref } from "@/lib/contact-utils";
 
@@ -24,6 +25,7 @@ const cityLinks = [
 const Header = () => {
   const { data } = usePublicContent();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [siteVisitOpen, setSiteVisitOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
@@ -137,12 +139,13 @@ const Header = () => {
             </div>
             {data.companyProfile.phone}
           </a>
-          <Link
-            to="/contact"
+          <button
+            type="button"
+            onClick={() => setSiteVisitOpen(true)}
             className="gradient-cta shine rounded-xl px-6 py-2.5 text-sm font-bold text-foreground shadow-lg shadow-secondary/25 transition-all hover:scale-105 hover:shadow-xl hover:shadow-secondary/30"
           >
             Book Site Visit
-          </Link>
+          </button>
         </div>
 
         <button
@@ -221,17 +224,22 @@ const Header = () => {
                 <a href={phoneHref} className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-solar-green/90">
                   <Phone className="h-4 w-4 text-solar-green" /> {data.companyProfile.phone}
                 </a>
-                <Link
-                  to="/contact"
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    setSiteVisitOpen(true);
+                  }}
                   className="mt-2 block rounded-xl bg-solar-green px-4 py-3 text-center text-sm font-bold text-primary-foreground shadow-lg transition-colors hover:bg-solar-green/90"
                 >
                   Book Site Visit
-                </Link>
+                </button>
               </div>
             </div>
           </motion.div>
         ) : null}
       </AnimatePresence>
+      <SiteVisitDialog open={siteVisitOpen} onOpenChange={setSiteVisitOpen} />
     </header>
   );
 };
