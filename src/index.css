@@ -201,8 +201,10 @@ html {
   scroll-behavior: smooth;
 }
 
-#root :where(*) {
+#root :where(p, li, blockquote) {
   text-align: justify;
+  text-align-last: start;
+  hyphens: auto;
 }
 
 #root :where(nav, nav *, button, [role="button"], input, textarea, select, label, svg, img, video, canvas) {
